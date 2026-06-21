@@ -1,0 +1,15 @@
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+sqlalchemy>=2.0.25
+alembic>=1.13.1
+python-multipart>=0.0.6
+Pillow>=10.2.0
+aiofiles>=23.2.1
+langgraph>=0.2.0
+langchain>=0.2.0
+langchain-core>=0.2.27
+langchain-community>=0.2.0
+dashscope>=1.20.0
+python-dotenv>=1.0.0
+pydantic>=2.6.0
+pydantic-settings>=2.1.0

@@ -1,0 +1,1 @@
+import{a as t}from"./index-Cp3aOBTg.js";async function n(a){const e=new FormData;return e.append("file",a),t.post("/images/upload",e,{headers:{"Content-Type":"multipart/form-data"}})}async function o(a){return t.get("/images/gallery",{params:{category:a}})}export{o as g,n as u};

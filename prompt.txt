@@ -1,0 +1,15 @@
+##一
+我想撰写一个软件SPEC，在以下需求的基础上进行优化：
+1、软件功能：实现一个对单个柜子家具3D模型图片进行真实渲染的在线网站，支持单个柜子家具模型渲染，也支持在多个典型户型中布置柜子后进行渲染；用户可以上传图片或者选择柜子列表中图片提交渲染
+2、软件架构：前端负责展示渲染前后图片，选择图片、选择参数与提交渲染；后端负责实现数据记录，柜子图片渲染功能；图片渲染使用Agent+skills实现
+3、软件框架：前端Vue3+Vite，后端Python+FastAPI+SQLite+LangGraph
+4、Agent实现：通过LangGraph框架调用LLM模型，模型使用qwen-image-2.0-pro，APIKEY使用环境变量os.getenv("DASHSCOPE_API_KEY")；支持连续对话、停止/继续对话
+5、LangGraph框架文档：https://docs.langchain.com/oss/python/langgraph/overview
+
+##二
+1、@file:SPEC2.md 基于这个SPEC文档进行设计与规划，完成完整的项目，使用Claude Code编写代码
+2、记录完成情况，写一个markdown文件
+3、写一个README.md说明文档
+
+##三
+继续完成Phase 2: DeepAgents LLM 集成，使用Claude Code生成代码
