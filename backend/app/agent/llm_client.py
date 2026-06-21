@@ -16,46 +16,51 @@ class LLMClient:
         prompt: str,
         reference_image_path: Optional[str] = None,
         negative_prompt: str = "",
-        size: str = "1024x1024",
+        size: str = "1024*1024",
     ) -> dict:
         try:
             import dashscope
-            from dashscope import ImageSynthesis
+            from dashscope import MultiModalConversation
 
-            reference_images = []
+            dashscope.api_key = self.api_key
+
+            content = []
             if reference_image_path:
                 full_path = reference_image_path.lstrip("/")
                 if os.path.exists(full_path):
                     with open(full_path, "rb") as f:
                         image_data = base64.b64encode(f.read()).decode("utf-8")
-                        reference_images.append(f"data:image/png;base64,{image_data}")
-
-            dashscope.api_key = self.api_key
+                        content.append({"image": f"data:image/png;base64,{image_data}"})
 
             full_prompt = prompt
             if negative_prompt:
                 full_prompt = f"{prompt}. Avoid: {negative_prompt}"
+            content.append({"text": full_prompt})
+
+            messages = [{"role": "user", "content": content}]
 
             logger.info(f"调用 LLM 渲染: prompt={full_prompt[:200]}...")
 
-            response = ImageSynthesis.call(
+            response = MultiModalConversation.call(
                 model=self.model_name,
-                prompt=full_prompt,
+                messages=messages,
                 n=1,
                 size=size,
-                ref_images=reference_images if reference_images else None,
+                watermark=False,
             )
 
             if response.status_code == 200 and response.output:
-                results = response.output.get("results", [])
-                if results:
-                    return {
-                        "success": True,
-                        "image_url": results[0].get("url", ""),
-                        "image_base64": None,
-                    }
-                else:
-                    return {"success": False, "error": "API 返回结果为空"}
+                choices = response.output.get("choices", [])
+                if choices:
+                    msg_content = choices[0].get("message", {}).get("content", [])
+                    for item in msg_content:
+                        if "image" in item:
+                            return {
+                                "success": True,
+                                "image_url": item["image"],
+                                "image_base64": None,
+                            }
+                return {"success": False, "error": "API 返回结果为空"}
             else:
                 error_msg = response.message if hasattr(response, "message") else str(response)
                 logger.error(f"LLM API 调用失败: {error_msg}")
