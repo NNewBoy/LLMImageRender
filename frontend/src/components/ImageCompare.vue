@@ -3,14 +3,18 @@
     <div class="compare-container">
       <div class="compare-image compare-original">
         <div class="image-label">原始图片</div>
-        <img :src="originalUrl" alt="原始图片" />
+        <div class="image-container">
+          <ImageViewer :src="originalUrl" alt="原始图片" />
+        </div>
       </div>
       <div class="compare-image compare-result">
         <div class="image-label">渲染结果</div>
-        <img v-if="resultUrl" :src="resultUrl" alt="渲染结果" />
-        <div v-else class="no-result">
-          <el-icon :size="32"><PictureFilled /></el-icon>
-          <span>等待渲染结果...</span>
+        <div class="image-container">
+          <ImageViewer v-if="resultUrl" :src="resultUrl" alt="渲染结果" />
+          <div v-else class="no-result">
+            <el-icon :size="32"><PictureFilled /></el-icon>
+            <span>等待渲染结果...</span>
+          </div>
         </div>
       </div>
     </div>
@@ -25,6 +29,7 @@
 
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
+import ImageViewer from '@/components/ImageViewer.vue'
 
 const props = defineProps<{
   originalUrl: string
@@ -69,9 +74,17 @@ const downloadImage = () => {
   border-bottom: 1px solid #e4e7ed;
 }
 
+.image-container {
+  height: 490px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
 .compare-image img {
   width: 100%;
-  max-height: 400px;
+  max-height: 490px;
   object-fit: contain;
   display: block;
 }

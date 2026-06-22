@@ -7,7 +7,7 @@
       </router-link>
     </div>
     <div class="header-right">
-      <el-menu mode="horizontal" :default-active="activeMenu" router>
+      <el-menu mode="horizontal" :default-active="activeMenu" router :ellipsis="false">
         <el-menu-item index="/">
           <el-icon><HomeFilled /></el-icon>
           <span>首页</span>

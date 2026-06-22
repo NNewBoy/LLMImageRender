@@ -1,8 +1,10 @@
 <template>
   <div class="task-card" @click="$emit('click')">
     <div class="task-thumbnail">
-      <img v-if="task.result_image_url" :src="task.result_image_url" alt="渲染结果" />
-      <img v-else :src="task.original_image_url" alt="原始图片" />
+      <ImageViewer
+        :src="task.result_image_url || task.original_image_url"
+        :alt="task.result_image_url ? '渲染结果' : '原始图片'"
+      />
       <div class="task-status-badge" :class="task.status">
         {{ statusLabel }}
       </div>
@@ -16,6 +18,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import ImageViewer from '@/components/ImageViewer.vue'
 import type { RenderTask } from '@/types'
 
 const props = defineProps<{ task: RenderTask }>()

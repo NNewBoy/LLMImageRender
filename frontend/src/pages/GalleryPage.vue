@@ -16,7 +16,7 @@
     <div v-loading="loading" class="gallery-grid">
       <div v-for="img in images" :key="img.image_id" class="gallery-card">
         <div class="gallery-image">
-          <img :src="img.thumbnail_url" :alt="img.name" />
+          <ImageViewer :src="img.thumbnail_url" :alt="img.name" />
         </div>
         <div class="gallery-info">
           <div class="gallery-name">{{ img.name }}</div>
@@ -38,6 +38,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { getGallery } from '@/api/gallery'
+import ImageViewer from '@/components/ImageViewer.vue'
 import type { GalleryImage, PresetOption } from '@/types'
 
 const images = ref<GalleryImage[]>([])

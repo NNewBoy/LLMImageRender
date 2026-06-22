@@ -7,26 +7,31 @@
       <h2>单品渲染</h2>
     </div>
 
-    <div class="render-layout">
-      <div class="render-left">
-        <el-card header="上传图片">
-          <ImageUploader @uploaded="onImageUploaded" />
-        </el-card>
-        <el-card header="从图库选择" class="gallery-card">
-          <GalleryPicker @selected="onGallerySelected" />
-        </el-card>
-        <div v-if="renderStore.selectedImageUrl" class="preview-card">
-          <el-card header="已选图片">
-            <img :src="renderStore.selectedImageUrl" alt="已选图片" class="selected-preview" />
-            <div class="selected-name">{{ renderStore.selectedImageName }}</div>
-          </el-card>
+    <div class="render-content">
+      <el-card class="image-card">
+        <el-tabs v-model="activeTab" type="border-card">
+          <el-tab-pane label="上传图片" name="upload">
+            <ImageUploader @uploaded="onImageUploaded" />
+          </el-tab-pane>
+          <el-tab-pane label="从图库选择" name="gallery">
+            <GalleryPicker @selected="onGallerySelected" />
+          </el-tab-pane>
+        </el-tabs>
+        <div v-if="renderStore.selectedImageUrl" class="preview-section">
+          <el-divider />
+          <div class="preview-title">已选图片</div>
+          <div class="preview-container">
+            <ImageViewer :src="renderStore.selectedImageUrl" alt="已选图片" />
+          </div>
+          <div class="selected-name">{{ renderStore.selectedImageName }}</div>
         </div>
-      </div>
+      </el-card>
 
-      <div class="render-right">
-        <el-card>
-          <ParamPanel :show-room-type="false" />
-        </el-card>
+      <el-card class="params-card">
+        <ParamPanel :show-room-type="false" />
+      </el-card>
+
+      <div class="submit-section">
         <SubmitBar />
       </div>
     </div>
@@ -34,14 +39,16 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRenderStore } from '@/stores/render'
 import ImageUploader from '@/components/ImageUploader.vue'
 import GalleryPicker from '@/components/GalleryPicker.vue'
+import ImageViewer from '@/components/ImageViewer.vue'
 import ParamPanel from '@/components/ParamPanel.vue'
 import SubmitBar from '@/components/SubmitBar.vue'
 
 const renderStore = useRenderStore()
+const activeTab = ref('upload')
 
 onMounted(() => {
   renderStore.setMode('single')
@@ -58,7 +65,7 @@ const onGallerySelected = (data: any) => {
 
 <style scoped>
 .single-render-page {
-  max-width: 1200px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -75,26 +82,36 @@ const onGallerySelected = (data: any) => {
   color: #303133;
 }
 
-.render-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.render-content {
+  display: flex;
+  flex-direction: column;
   gap: 20px;
-  align-items: start;
 }
 
-.gallery-card {
-  margin-top: 16px;
-}
-
-.preview-card {
-  margin-top: 16px;
-}
-
-.selected-preview {
+.image-card {
   width: 100%;
-  max-height: 200px;
-  object-fit: contain;
+}
+
+.preview-section {
+  padding: 0 20px 20px;
+}
+
+.preview-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 12px;
+}
+
+.preview-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 6px;
+  border: 1px solid #e4e7ed;
+  background: #fafafa;
+  padding: 8px;
+  height: 300px;
 }
 
 .selected-name {
@@ -102,5 +119,14 @@ const onGallerySelected = (data: any) => {
   font-size: 13px;
   color: #909399;
   text-align: center;
+}
+
+.params-card {
+  width: 100%;
+}
+
+.submit-section {
+  width: 100%;
+  padding-bottom: 40px;
 }
 </style>

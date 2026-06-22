@@ -25,7 +25,6 @@ LLMImageRender/
 │   ├── src/
 │   │   ├── components/          # 通用组件
 │   │   │   ├── AppHeader.vue    # 顶部导航
-│   │   │   ├── AppFooter.vue    # 底部信息
 │   │   │   ├── ImageUploader.vue # 图片上传组件
 │   │   │   ├── GalleryPicker.vue # 图库选择器
 │   │   │   ├── ParamPanel.vue   # 参数配置面板
