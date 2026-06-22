@@ -38,12 +38,6 @@
           {{ task.params.description }}
         </el-descriptions-item>
       </el-descriptions>
-
-      <div v-if="task.status === 'completed'" class="chat-section">
-        <el-card header="AI 对话调整">
-          <ChatPanel :task-id="task.task_id" />
-        </el-card>
-      </div>
     </div>
   </div>
 </template>
@@ -54,7 +48,6 @@ import { useRoute } from 'vue-router'
 import { getTaskStatus } from '@/api/render'
 import TaskStatus from '@/components/TaskStatus.vue'
 import ImageCompare from '@/components/ImageCompare.vue'
-import ChatPanel from '@/components/ChatPanel.vue'
 import type { RenderTask } from '@/types'
 
 const route = useRoute()
@@ -141,10 +134,6 @@ onUnmounted(stopPolling)
 }
 
 .params-desc {
-  margin-top: 24px;
-}
-
-.chat-section {
   margin-top: 24px;
 }
 </style>

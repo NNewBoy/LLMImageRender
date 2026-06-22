@@ -78,32 +78,3 @@ def build_render_prompt(params: dict, mode: str) -> str:
     prompt = "，".join(prompt_parts)
     logger.info(f"渲染提示词构建完成: {prompt[:200]}...")
     return prompt
-
-
-def build_chat_response(user_message: str, params: dict) -> tuple:
-    content = "已收到您的需求，正在调整渲染参数..."
-
-    params_update = {}
-
-    color_keywords = {
-        "深棕": "#4A3728", "棕色": "#8B7355", "深色": "#3C3C3C",
-        "白色": "#FFFFFF", "黑色": "#1A1A1A", "灰色": "#808080",
-        "原木": "#DEB887", "米白": "#F5F5DC", "浅色": "#FAFAFA",
-    }
-    for keyword, color_code in color_keywords.items():
-        if keyword in user_message:
-            params_update["color"] = color_code
-            content = f"好的，已将柜子颜色调整为{keyword}（{color_code}）"
-            break
-
-    lighting_keywords = {"暖光": "warm", "冷光": "cool", "自然光": "natural", "暗": "warm_dim", "亮": "natural"}
-    for keyword, light_val in lighting_keywords.items():
-        if keyword in user_message:
-            params_update["lighting"] = light_val
-            if content == "已收到您的需求，正在调整渲染参数...":
-                content = f"好的，已将光照调整为{keyword}"
-            else:
-                content += f"，光照调整为{keyword}"
-            break
-
-    return content, params_update

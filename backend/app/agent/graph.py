@@ -122,43 +122,4 @@ async def run_render_agent(
         }
 
 
-async def run_chat_agent(
-    session_id: str,
-    task_id: str,
-    messages: list[dict],
-    user_message: str,
-) -> dict:
-    from app.agent.skills.prompt_builder import build_chat_response
-
-    from app.database import SessionLocal
-    from app.models.task import RenderTask
-    import json
-
-    db = SessionLocal()
-    try:
-        task = db.query(RenderTask).filter(RenderTask.task_id == task_id).first()
-        params = {}
-        if task and task.params_json:
-            params = json.loads(task.params_json)
-    finally:
-        db.close()
-
-    content, params_update = build_chat_response(user_message, params)
-
-    try:
-        llm_result = await llm_client.chat(
-            messages=messages,
-            system_prompt="你是家具渲染助手，帮助用户调整渲染参数。",
-        )
-        if llm_result.get("success") and llm_result.get("content"):
-            content = llm_result["content"]
-    except Exception:
-        pass
-
-    return {
-        "content": content,
-        "params_update": params_update,
-    }
-
-
 from app.agent.llm_client import llm_client

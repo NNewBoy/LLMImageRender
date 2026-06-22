@@ -6,7 +6,6 @@
 
 - **单品渲染**：上传柜子图片，AI 智能生成真实感3D渲染效果图
 - **场景渲染**：将柜子布置在客厅、卧室、厨房、书房、玄关等典型户型中进行渲染
-- **AI 对话交互**：通过自然语言调整渲染参数（风格、光照、颜色、材质等）
 - **图库管理**：预设柜子图库，支持分类浏览和选择
 - **渲染历史**：查看和管理所有渲染任务记录
 
@@ -17,7 +16,6 @@
 | 前端 | Vue 3 + Vite + TypeScript + Element Plus + Pinia |
 | 后端 | Python + FastAPI + SQLite + SQLAlchemy |
 | AI引擎 | LangGraph + Qwen-Image-2.0-Pro (DashScope MultiModalConversation API) |
-| 对话 | LangGraph Agent + MemorySaver 检查点 |
 
 ## 项目结构
 
@@ -31,7 +29,6 @@ LLMImageRender/
 │   │   │   ├── ImageUploader.vue # 图片上传组件
 │   │   │   ├── GalleryPicker.vue # 图库选择器
 │   │   │   ├── ParamPanel.vue   # 参数配置面板
-│   │   │   ├── ChatPanel.vue    # AI对话面板
 │   │   │   ├── ImageCompare.vue # 前后对比组件
 │   │   │   ├── SubmitBar.vue    # 提交按钮栏
 │   │   │   ├── TaskCard.vue     # 任务卡片
@@ -58,16 +55,13 @@ LLMImageRender/
 │   │   ├── database.py          # 数据库连接
 │   │   ├── models/              # 数据模型
 │   │   │   ├── task.py          # 渲染任务
-│   │   │   ├── gallery.py       # 图库图片
-│   │   │   └── chat.py          # 对话记录
+│   │   │   └── gallery.py       # 图库图片
 │   │   ├── routers/             # API路由
 │   │   │   ├── images.py        # 图片上传/图库
 │   │   │   ├── render.py        # 渲染任务
-│   │   │   ├── chat.py          # 对话管理
 │   │   │   └── params.py        # 预设参数
 │   │   ├── services/            # 业务逻辑
 │   │   │   ├── render_service.py
-│   │   │   ├── chat_service.py
 │   │   │   └── file_service.py
 │   │   ├── agent/               # LangGraph Agent
 │   │   │   ├── graph.py         # 工作流图定义
@@ -156,10 +150,6 @@ npm run dev
 | POST | `/api/render/submit` | 提交渲染任务 |
 | GET | `/api/render/task/:id` | 查询任务状态 |
 | GET | `/api/render/history` | 渲染历史 |
-| POST | `/api/chat/start` | 开启对话 |
-| POST | `/api/chat/message` | 发送消息 |
-| POST | `/api/chat/stop` | 停止对话 |
-| POST | `/api/chat/continue` | 继续对话 |
 | GET | `/api/params/presets` | 获取预设参数 |
 
 ## LangGraph Agent 工作流
@@ -175,8 +165,8 @@ START → parse_input → build_prompt → check_interrupt
 ```
 
 - **中断/恢复**：通过 `MemorySaver` 检查点机制实现
-- **停止对话**：设置 `is_paused=True`，路由到 END
-- **继续对话**：设置 `is_paused=False`，恢复执行
+- **停止任务**：设置 `is_cancelled=True`，路由到 save_result
+- **暂停任务**：设置 `is_paused=True`，路由到 END
 
 ## 环境变量
 
@@ -203,14 +193,13 @@ START → parse_input → build_prompt → check_interrupt
 | main.py | `[应用启动]` | 应用初始化、配置信息、数据库初始化 |
 | render.py | `[渲染任务提交]` / `[查询任务状态]` / `[获取任务结果]` | 渲染任务全流程 |
 | images.py | `[图片上传]` / `[获取图片列表]` / `[获取图片详情]` | 图片管理操作 |
-| chat.py | `[开启对话]` / `[发送消息]` / `[停止对话]` / `[继续对话]` | 对话管理操作 |
 | render_service.py | `[渲染服务]` / `[渲染执行]` | 渲染任务调度与执行 |
-| llm_client.py | `[LLM客户端]` / `[LLM图片生成]` / `[LLM对话]` | LLM API 调用详情 |
+| llm_client.py | `[LLM客户端]` / `[LLM图片生成]` | LLM API 调用详情 |
 
 ### 日志级别
 
 - **INFO**：正常业务流程
-- **WARNING**：非关键异常（如图片不存在、会话已暂停）
+- **WARNING**：非关键异常（如图片不存在）
 - **ERROR**：关键错误（如 API 调用失败、任务执行异常）
 
 ## LLM API 集成说明
@@ -226,7 +215,3 @@ START → parse_input → build_prompt → check_interrupt
 - `model`: "qwen-image-2.0-pro"
 - `size`: 使用星号分隔格式（如 "1024*1024"）
 - `messages`: 包含 `image` 和 `text` 对象的数组
-
-### qwen-plus 对话
-
-使用 DashScope `Generation` API 进行自然语言对话交互。

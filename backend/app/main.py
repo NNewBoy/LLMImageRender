@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 from app.database import init_db
-from app.routers import images, render, chat, params
+from app.routers import images, render, params
 
 # 配置日志
 logging.basicConfig(
@@ -38,7 +38,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.include_router(images.router, prefix="/api/images", tags=["images"])
 app.include_router(render.router, prefix="/api/render", tags=["render"])
-app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 app.include_router(params.router, prefix="/api/params", tags=["params"])
 
 logger.info("=" * 50)

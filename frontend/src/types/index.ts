@@ -36,13 +36,6 @@ export interface GalleryImage {
   height: number
 }
 
-export interface ChatMessage {
-  role: 'user' | 'assistant' | 'system'
-  content: string
-  params_update?: Record<string, any>
-  created_at?: string
-}
-
 export interface PresetOption {
   value: string
   label: string

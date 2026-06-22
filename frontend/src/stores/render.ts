@@ -19,8 +19,6 @@ export const useRenderStore = defineStore('render', () => {
     cabinet_size: { width: 1200, height: 2200, depth: 600 },
   })
   const currentTaskId = ref<string | null>(null)
-  const currentSessionId = ref<string | null>(null)
-  const isChatActive = ref(false)
 
   function setMode(m: 'single' | 'scene') {
     mode.value = m
@@ -58,7 +56,7 @@ export const useRenderStore = defineStore('render', () => {
 
   return {
     mode, uploadImageId, selectedImageId, selectedImageUrl, selectedImageName,
-    params, currentTaskId, currentSessionId, isChatActive,
+    params, currentTaskId,
     setMode, setUploadImage, setGalleryImage, updateParams, resetParams,
   }
 }, {

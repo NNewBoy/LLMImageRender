@@ -14,6 +14,7 @@
 | **Phase 4** | 前端完善与联调 | 2天 | ✅ 已完成 |
 | **Phase 5** | 优化与部署 | 2天 | ✅ 已完成 |
 | **Phase 6** | API 修复与日志系统 | - | ✅ 已完成 |
+| **Phase 7** | 移除 AI 对话功能 | - | ✅ 已完成 |
 
 **验证结果**：
 - 后端服务启动成功（`http://localhost:8000`）
@@ -58,7 +59,6 @@
 |------|------|------|------|
 | [backend/app/models/__init__.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/models/__init__.py) | 模型导出 | ✅ |
 | [backend/app/models/task.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/models/task.py) | RenderTask | 渲染任务（task_id、mode、status、progress、图片路径、参数JSON） | ✅ |
-| [backend/app/models/chat.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/models/chat.py) | ChatSession / ChatMessage | 对话会话与消息记录 | ✅ |
 | [backend/app/models/gallery.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/models/gallery.py) | GalleryImage | 图库图片（分类、路径、缩略图） | ✅ |
 
 ### 2.1.4 基础 API 端点实现
@@ -196,30 +196,6 @@ START → parse_input → build_prompt → check_interrupt
 | [skills/room_template.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/agent/skills/room_template.py) | 户型模板 | 场景渲染提示词（客厅/卧室/厨房/书房/玄关） | ✅ |
 | [skills/result_postprocess.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/agent/skills/result_postprocess.py) | 结果后处理 | 图片下载、格式处理 | ✅ |
 
-### 4.3.4 对话管理（停止/继续）
-
-| 文件 | 说明 | 状态 |
-|------|------|------|
-| [backend/app/routers/chat.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/routers/chat.py) | 对话路由：开启/消息/停止/继续/历史 | ✅ |
-| [backend/app/services/chat_service.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/services/chat_service.py) | 对话会话管理、停止/继续控制 | ✅ |
-| [frontend/src/api/chat.ts](file:///e:/AICodeProgram/LLMImageRender/frontend/src/api/chat.ts) | 对话 API 封装 | ✅ |
-
-**API 端点**：
-
-| 端点 | 方法 | 说明 | 状态 |
-|------|------|------|------|
-| `/api/chat/start` | POST | 开启对话会话 | ✅ |
-| `/api/chat/message` | POST | 发送对话消息 | ✅ |
-| `/api/chat/{session_id}/stop` | POST | 停止对话 | ✅ |
-| `/api/chat/{session_id}/continue` | POST | 继续对话 | ✅ |
-| `/api/chat/{session_id}/history` | GET | 对话历史 | ✅ |
-
-**实现要点**：
-- LangGraph `MemorySaver` 检查点实现上下文持久化
-- 支持连续多轮对话
-- 停止/继续对话控制
-- 对话历史记录持久化到 SQLite
-
 ---
 
 ## 五、Phase 4：前端完善与联调
@@ -237,19 +213,7 @@ START → parse_input → build_prompt → check_interrupt
 - 渲染结果下载功能
 - 进度条展示
 
-### 5.4.2 对话交互面板
-
-| 文件 | 说明 | 状态 |
-|------|------|------|
-| [frontend/src/components/ChatPanel.vue](file:///e:/AICodeProgram/LLMImageRender/frontend/src/components/ChatPanel.vue) | AI对话交互面板 | ✅ |
-
-**实现要点**：
-- 自然语言调整渲染参数
-- 对话消息气泡展示
-- 停止/继续对话按钮
-- 对话历史加载
-
-### 5.4.3 历史记录页面
+### 5.4.2 历史记录页面
 
 | 文件 | 说明 | 状态 |
 |------|------|------|
@@ -263,7 +227,7 @@ START → parse_input → build_prompt → check_interrupt
 - 点击跳转任务详情
 - 任务删除功能
 
-### 5.4.4 前后端联调测试
+### 5.4.3 前后端联调测试
 
 | 测试项 | 结果 | 状态 |
 |--------|------|------|
@@ -293,7 +257,6 @@ START → parse_input → build_prompt → check_interrupt
 | 文件 | 说明 | 状态 |
 |------|------|------|
 | [backend/app/routers/render.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/routers/render.py) | HTTP 异常处理（400/404） | ✅ |
-| [backend/app/routers/chat.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/routers/chat.py) | 会话状态校验（active/paused） | ✅ |
 | [backend/app/agent/nodes.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/agent/nodes.py) | LLM 调用错误捕获与状态标记 | ✅ |
 | [backend/app/agent/graph.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/agent/graph.py) | 条件路由处理取消/暂停/错误 | ✅ |
 
@@ -355,24 +318,62 @@ START → parse_input → build_prompt → check_interrupt
 | [main.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/main.py) | `[应用启动]` | 应用初始化、配置信息、数据库初始化 |
 | [render.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/routers/render.py) | `[渲染任务提交]` / `[查询任务状态]` / `[获取任务结果]` / `[获取渲染历史]` / `[删除任务]` | 渲染任务全流程 |
 | [images.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/routers/images.py) | `[图片上传]` / `[获取图片列表]` / `[获取图片详情]` | 图片管理操作 |
-| [chat.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/routers/chat.py) | `[开启对话]` / `[发送消息]` / `[停止对话]` / `[继续对话]` / `[获取对话历史]` | 对话管理操作 |
 | [render_service.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/services/render_service.py) | `[渲染服务]` / `[渲染执行]` | 渲染任务调度与执行 |
-| [llm_client.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/agent/llm_client.py) | `[LLM客户端]` / `[LLM图片生成]` / `[LLM对话]` | LLM API 调用详情 |
+| [llm_client.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/agent/llm_client.py) | `[LLM客户端]` / `[LLM图片生成]` | LLM API 调用详情 |
 
 **日志输出示例**：
 ```
 2026-06-22 14:30:00 - app.routers.render - INFO - [渲染任务提交] mode=single, image_source={'type': 'gallery', 'image_id': 'img_xxx'}, params={'style': 'modern_minimalist'}
 2026-06-22 14:30:01 - app.services.render_service - INFO - [渲染执行] 开始执行渲染: task_id=task_xxx
 2026-06-22 14:30:02 - app.agent.llm_client - INFO - [LLM图片生成] 开始调用, model=qwen-image-2.0-pro, size=1024*1024
-2026-06-22 14:30:05 - app.agent.llm_client - INFO - [LLM图片生成] API响应: status_code=200
-2026-06-22 14:30:06 - app.services.render_service - INFO - [渲染执行] 渲染任务完成: task_id=task_xxx
 ```
 
 ---
 
-## 八、功能实现对照（SPEC 需求）
+## 八、Phase 7：移除 AI 对话功能（2026-06-22 新增）
 
-### 8.1 模块一：图片管理
+### 8.7.1 功能移除原因
+
+AI 对话调整功能已从项目中移除，简化系统架构，专注于核心渲染功能。
+
+### 8.7.2 删除的文件
+
+**后端**：
+- `backend/app/routers/chat.py` - 对话路由
+- `backend/app/services/chat_service.py` - 对话服务
+- `backend/app/models/chat.py` - 对话数据模型（ChatSession、ChatMessage）
+
+**前端**：
+- `frontend/src/api/chat.ts` - 对话 API 封装
+- `frontend/src/components/ChatPanel.vue` - 对话面板组件
+
+### 8.7.3 修改的文件
+
+| 文件 | 修改内容 |
+|------|----------|
+| [frontend/src/pages/RenderDetailPage.vue](file:///e:/AICodeProgram/LLMImageRender/frontend/src/pages/RenderDetailPage.vue) | 删除 ChatPanel 组件引用和使用 |
+| [backend/app/main.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/main.py) | 删除 chat 路由注册 |
+| [backend/app/models/__init__.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/models/__init__.py) | 删除 ChatSession、ChatMessage 导出 |
+| [backend/app/agent/graph.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/agent/graph.py) | 删除 run_chat_agent 函数 |
+| [backend/app/agent/llm_client.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/agent/llm_client.py) | 删除 chat 方法 |
+| [backend/app/agent/nodes.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/agent/nodes.py) | 删除 build_chat_response 导入 |
+| [backend/app/agent/skills/prompt_builder.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/agent/skills/prompt_builder.py) | 删除 build_chat_response 函数 |
+| [frontend/src/stores/render.ts](file:///e:/AICodeProgram/LLMImageRender/frontend/src/stores/render.ts) | 删除 currentSessionId、isChatActive 状态 |
+| [frontend/src/types/index.ts](file:///e:/AICodeProgram/LLMImageRender/frontend/src/types/index.ts) | 删除 ChatMessage 接口 |
+
+### 8.7.4 移除后的系统架构
+
+系统现在专注于核心渲染功能：
+- 图片上传与图库管理
+- 渲染参数配置
+- 渲染任务提交与状态查询
+- 渲染结果展示与下载
+
+---
+
+## 九、功能实现对照（SPEC 需求）
+
+### 9.1 模块一：图片管理
 
 | 需求 | 实现情况 | 状态 |
 |------|----------|------|
@@ -381,7 +382,7 @@ START → parse_input → build_prompt → check_interrupt
 | 图片格式：JPG/PNG/WebP | 后端 file_service 支持 | ✅ |
 | 图库分类浏览 | GalleryPage 支持分类筛选 | ✅ |
 
-### 8.2 模块二：渲染参数配置
+### 9.2 模块二：渲染参数配置
 
 | 需求 | 实现情况 | 状态 |
 |------|----------|------|
@@ -393,7 +394,7 @@ START → parse_input → build_prompt → check_interrupt
 | 柜子材质/颜色覆写 | ParamPanel 支持 | ✅ |
 | 自然语言描述 | ParamPanel 文本输入框 | ✅ |
 
-### 8.3 模块三：渲染任务管理
+### 9.3 模块三：渲染任务管理
 
 | 需求 | 实现情况 | 状态 |
 |------|----------|------|
@@ -404,17 +405,7 @@ START → parse_input → build_prompt → check_interrupt
 | 图片下载 | RenderDetailPage 下载按钮 | ✅ |
 | 任务状态（排队/处理中/完成/失败） | 后端 status 字段 + TaskStatus 组件 | ✅ |
 
-### 8.4 模块四：AI对话交互
-
-| 需求 | 实现情况 | 状态 |
-|------|----------|------|
-| 自然语言调整渲染参数 | ChatPanel + /api/chat/message | ✅ |
-| 连续多轮对话 | ChatSession + MemorySaver 检查点 | ✅ |
-| 停止/继续对话控制 | /api/chat/{id}/stop + /continue | ✅ |
-| 对话历史展示 | /api/chat/{id}/history + ChatPanel | ✅ |
-| 上下文感知 | LangGraph MemorySaver 持久化 | ✅ |
-
-### 8.5 模块五：柜子图库管理
+### 9.4 模块四：柜子图库管理
 
 | 需求 | 实现情况 | 状态 |
 |------|----------|------|
@@ -424,7 +415,7 @@ START → parse_input → build_prompt → check_interrupt
 
 ---
 
-## 九、技术栈实现确认
+## 十、技术栈实现确认
 
 | 层级 | SPEC 要求 | 实际使用 | 状态 |
 |------|-----------|----------|------|
@@ -437,20 +428,19 @@ START → parse_input → build_prompt → check_interrupt
 | 数据库 | SQLite | SQLite 3 | ✅ |
 | ORM | SQLAlchemy 2 | SQLAlchemy 2.0.25 | ✅ |
 | Agent 编排 | LangGraph | LangGraph 0.2+ | ✅ |
-| LLM 集成 | LangChain | LangChain 0.2+ | ✅ |
 | LLM 模型 | qwen-image-2.0-pro | DashScope MultiModalConversation API | ✅ |
 
 ---
 
-## 十、已知问题与解决方案
+## 十一、已知问题与解决方案
 
-### 10.1 API 调用问题（已解决）
+### 11.1 API 调用问题（已解决）
 
 **问题**：`ImageSynthesis.call()` 不支持 Base64 数据 URI 格式
 **解决**：改用 `MultiModalConversation.call()` API
 **状态**：✅ 已修复
 
-### 10.2 日志缺失问题（已解决）
+### 11.2 日志缺失问题（已解决）
 
 **问题**：后端关键节点缺少日志输出，难以排查问题
 **解决**：集成完整日志系统，覆盖所有 API 和服务模块

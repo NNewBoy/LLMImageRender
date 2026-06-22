@@ -2,9 +2,7 @@ import logging
 from app.agent.state import RenderAgentState
 from app.agent.skills.image_preprocess import preprocess_image
 from app.agent.skills.param_optimizer import optimize_params
-from app.agent.skills.prompt_builder import (
-    build_system_prompt, build_render_prompt, build_chat_response,
-)
+from app.agent.skills.prompt_builder import build_system_prompt, build_render_prompt
 from app.agent.skills.room_template import build_scene_prompt
 from app.agent.llm_client import llm_client
 
