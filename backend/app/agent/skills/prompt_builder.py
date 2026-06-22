@@ -49,6 +49,7 @@ def build_render_prompt(params: dict, mode: str) -> str:
     view_angle = VIEW_ANGLE_MAP.get(params.get("view_angle", ""), "")
     material = MATERIAL_MAP.get(params.get("material", ""), "")
     color = params.get("color", "")
+    background_color = params.get("background_color", "")
     description = params.get("description", "")
 
     size = params.get("cabinet_size", {})
@@ -68,6 +69,8 @@ def build_render_prompt(params: dict, mode: str) -> str:
         prompt_parts.append(f"材质：{material}")
     if color:
         prompt_parts.append(f"颜色：{color}")
+    if mode == "single" and background_color:
+        prompt_parts.append(f"背景：纯色背景，背景颜色为{background_color}，背景干净简洁无杂物无纹理")
     if size_desc:
         prompt_parts.append(size_desc)
     if description:

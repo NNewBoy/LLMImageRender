@@ -24,6 +24,7 @@ async def parse_input(state: RenderAgentState) -> RenderAgentState:
         "cabinet_size": state.get("cabinet_size"),
         "material": state.get("material"),
         "color": state.get("color"),
+        "background_color": state.get("background_color"),
         "description": state.get("description", ""),
     }
 
@@ -49,6 +50,7 @@ async def build_prompt(state: RenderAgentState) -> RenderAgentState:
         "cabinet_size": state.get("cabinet_size"),
         "material": state.get("material"),
         "color": state.get("color"),
+        "background_color": state.get("background_color"),
         "description": state.get("description"),
     }
 

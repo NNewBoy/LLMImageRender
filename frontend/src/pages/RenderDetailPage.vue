@@ -34,6 +34,9 @@
         <el-descriptions-item label="颜色">
           <el-color-picker :model-value="task.params.color" disabled />
         </el-descriptions-item>
+        <el-descriptions-item v-if="task.mode === 'single' && task.params.background_color" label="背景颜色">
+          <el-color-picker :model-value="task.params.background_color" disabled />
+        </el-descriptions-item>
         <el-descriptions-item v-if="task.params.description" label="描述" :span="2">
           {{ task.params.description }}
         </el-descriptions-item>

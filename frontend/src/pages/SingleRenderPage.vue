@@ -28,7 +28,7 @@
       </el-card>
 
       <el-card class="params-card">
-        <ParamPanel :show-room-type="false" />
+        <ParamPanel :show-room-type="false" :show-background="true" />
       </el-card>
 
       <div class="submit-section">

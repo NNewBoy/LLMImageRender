@@ -15,6 +15,7 @@ export const useRenderStore = defineStore('render', () => {
     room_type: 'living_room',
     material: 'oak_wood',
     color: '#8B7355',
+    background_color: '#FFFFFF',
     description: '',
     cabinet_size: { width: 1200, height: 2200, depth: 600 },
   })
@@ -49,6 +50,7 @@ export const useRenderStore = defineStore('render', () => {
       room_type: 'living_room',
       material: 'oak_wood',
       color: '#8B7355',
+      background_color: '#FFFFFF',
       description: '',
       cabinet_size: { width: 1200, height: 2200, depth: 600 },
     }

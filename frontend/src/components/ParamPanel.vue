@@ -38,6 +38,25 @@
         <span class="color-value">{{ localParams.color }}</span>
       </el-form-item>
 
+      <el-form-item v-if="showBackground" label="背景颜色">
+        <div class="background-picker">
+          <el-color-picker v-model="localParams.background_color" />
+          <span class="color-value">{{ localParams.background_color }}</span>
+          <div class="preset-colors">
+            <span class="preset-label">快速选择：</span>
+            <el-button
+              v-for="c in presetBackgroundColors"
+              :key="c.value"
+              :style="{ background: c.value }"
+              class="preset-color-btn"
+              :class="{ active: localParams.background_color === c.value }"
+              @click="localParams.background_color = c.value"
+              :title="c.label"
+            />
+          </div>
+        </div>
+      </el-form-item>
+
       <el-form-item label="柜子尺寸 (mm)">
         <div class="size-inputs">
           <el-input-number v-model="localParams.cabinet_size!.width" :min="200" :max="5000" placeholder="宽" />
@@ -66,8 +85,17 @@ import { useRenderStore } from '@/stores/render'
 import type { RenderParams } from '@/types'
 import api from '@/api'
 
-const props = defineProps<{ showRoomType?: boolean }>()
+const props = defineProps<{ showRoomType?: boolean; showBackground?: boolean }>()
 const renderStore = useRenderStore()
+
+const presetBackgroundColors = [
+  { value: '#FFFFFF', label: '纯白' },
+  { value: '#F5F5F5', label: '浅灰' },
+  { value: '#E8E8E8', label: '中性灰' },
+  { value: '#000000', label: '纯黑' },
+  { value: '#F5E6D3', label: '米色' },
+  { value: '#D9E2F3', label: '浅蓝' },
+]
 
 const presets = ref({
   styles: [] as any[],
@@ -84,6 +112,7 @@ const localParams = reactive<RenderParams>({
   room_type: renderStore.params.room_type,
   material: renderStore.params.material,
   color: renderStore.params.color,
+  background_color: renderStore.params.background_color || '#FFFFFF',
   description: renderStore.params.description || '',
   cabinet_size: {
     width: renderStore.params.cabinet_size?.width || 1200,
@@ -147,5 +176,39 @@ onMounted(async () => {
 .size-sep {
   color: #c0c4cc;
   font-weight: bold;
+}
+
+.background-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.preset-colors {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.preset-label {
+  font-size: 13px;
+  color: #909399;
+}
+
+.preset-color-btn {
+  width: 28px;
+  height: 28px;
+  min-height: 28px;
+  padding: 0;
+  border: 2px solid #dcdfe6;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.preset-color-btn.active {
+  border-color: #409eff;
+  box-shadow: 0 0 4px rgba(64, 158, 255, 0.5);
 }
 </style>

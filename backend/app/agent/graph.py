@@ -90,6 +90,7 @@ async def run_render_agent(
         "cabinet_size": params.get("cabinet_size"),
         "material": params.get("material"),
         "color": params.get("color"),
+        "background_color": params.get("background_color"),
         "description": params.get("description", ""),
         "messages": [],
         "system_prompt": "",

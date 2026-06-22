@@ -10,6 +10,7 @@ export interface RenderParams {
   }
   material?: string
   color?: string
+  background_color?: string
   description?: string
 }
 

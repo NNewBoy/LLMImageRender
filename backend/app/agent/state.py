@@ -16,6 +16,7 @@ class RenderAgentState(TypedDict, total=False):
     cabinet_size: Optional[dict]
     material: Optional[str]
     color: Optional[str]
+    background_color: Optional[str]
     description: Optional[str]
 
     messages: list[dict]
