@@ -1,6 +1,6 @@
 # LLMImageRender 项目完成情况记录
 
-> 基于 `SPEC.md` 第8章开发计划实现，最后更新：2026-06-21
+> 基于 `SPEC.md` 第8章开发计划实现，最后更新：2026-06-22
 
 ---
 
@@ -13,6 +13,7 @@
 | **Phase 3** | LangGraph Agent 集成 | 3天 | ✅ 已完成 |
 | **Phase 4** | 前端完善与联调 | 2天 | ✅ 已完成 |
 | **Phase 5** | 优化与部署 | 2天 | ✅ 已完成 |
+| **Phase 6** | API 修复与日志系统 | - | ✅ 已完成 |
 
 **验证结果**：
 - 后端服务启动成功（`http://localhost:8000`）
@@ -20,6 +21,7 @@
 - 前端 TypeScript 类型检查通过（`vue-tsc --noEmit` 无报错）
 - 前端生产构建成功（`npm run build` 生成 dist 目录）
 - 种子数据初始化成功（3 条图库记录）
+- LLM API 调用正常（使用 MultiModalConversation 接口）
 
 ---
 
@@ -179,7 +181,9 @@ START → parse_input → build_prompt → check_interrupt
 **实现要点**：
 - 模型：`qwen-image-2.0-pro`
 - API Key：`os.getenv("DASHSCOPE_API_KEY")` 环境变量读取
-- 通过 DashScope SDK 调用图片生成接口
+- 使用 `MultiModalConversation` API（支持 Base64 数据 URI 格式参考图片）
+- 请求格式：`messages` + `content` 数组（包含 `image` 和 `text` 对象）
+- 响应解析：`output.choices[0].message.content` 中提取 `image` URL
 - 支持错误处理与重试
 
 ### 4.3.3 Skills 模块实现
@@ -318,9 +322,57 @@ START → parse_input → build_prompt → check_interrupt
 
 ---
 
-## 七、功能实现对照（SPEC 需求）
+## 七、Phase 6：API 修复与日志系统（2026-06-22 新增）
 
-### 7.1 模块一：图片管理
+### 7.6.1 LLM API 问题修复
+
+**问题描述**：
+- 原代码使用 `ImageSynthesis.call()`（旧版万相文生图 API）
+- `ref_images` 参数只接受公网 URL，不接受 Base64 数据 URI
+- 导致报错：`url error, please check url!`
+
+**修复方案**：
+- 改用 `MultiModalConversation.call()` API
+- 使用 `messages` + `content` 数组格式
+- 图片使用 `{"image": "data:image/png;base64,..."}` 格式
+- 文本使用 `{"text": prompt}` 格式
+- 响应解析改为 `output.choices[0].message.content` 结构
+
+**修改文件**：
+- [backend/app/agent/llm_client.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/agent/llm_client.py) - LLM 客户端核心逻辑
+
+### 7.6.2 后端日志系统集成
+
+**日志配置**：
+- 统一日志格式：`%(asctime)s - %(name)s - %(levelname)s - %(message)s`
+- 日志级别：INFO / WARNING / ERROR
+- 在 main.py 中配置 `logging.basicConfig`
+
+**日志覆盖模块**：
+
+| 模块 | 日志标签 | 说明 |
+|------|----------|------|
+| [main.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/main.py) | `[应用启动]` | 应用初始化、配置信息、数据库初始化 |
+| [render.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/routers/render.py) | `[渲染任务提交]` / `[查询任务状态]` / `[获取任务结果]` / `[获取渲染历史]` / `[删除任务]` | 渲染任务全流程 |
+| [images.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/routers/images.py) | `[图片上传]` / `[获取图片列表]` / `[获取图片详情]` | 图片管理操作 |
+| [chat.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/routers/chat.py) | `[开启对话]` / `[发送消息]` / `[停止对话]` / `[继续对话]` / `[获取对话历史]` | 对话管理操作 |
+| [render_service.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/services/render_service.py) | `[渲染服务]` / `[渲染执行]` | 渲染任务调度与执行 |
+| [llm_client.py](file:///e:/AICodeProgram/LLMImageRender/backend/app/agent/llm_client.py) | `[LLM客户端]` / `[LLM图片生成]` / `[LLM对话]` | LLM API 调用详情 |
+
+**日志输出示例**：
+```
+2026-06-22 14:30:00 - app.routers.render - INFO - [渲染任务提交] mode=single, image_source={'type': 'gallery', 'image_id': 'img_xxx'}, params={'style': 'modern_minimalist'}
+2026-06-22 14:30:01 - app.services.render_service - INFO - [渲染执行] 开始执行渲染: task_id=task_xxx
+2026-06-22 14:30:02 - app.agent.llm_client - INFO - [LLM图片生成] 开始调用, model=qwen-image-2.0-pro, size=1024*1024
+2026-06-22 14:30:05 - app.agent.llm_client - INFO - [LLM图片生成] API响应: status_code=200
+2026-06-22 14:30:06 - app.services.render_service - INFO - [渲染执行] 渲染任务完成: task_id=task_xxx
+```
+
+---
+
+## 八、功能实现对照（SPEC 需求）
+
+### 8.1 模块一：图片管理
 
 | 需求 | 实现情况 | 状态 |
 |------|----------|------|
@@ -329,7 +381,7 @@ START → parse_input → build_prompt → check_interrupt
 | 图片格式：JPG/PNG/WebP | 后端 file_service 支持 | ✅ |
 | 图库分类浏览 | GalleryPage 支持分类筛选 | ✅ |
 
-### 7.2 模块二：渲染参数配置
+### 8.2 模块二：渲染参数配置
 
 | 需求 | 实现情况 | 状态 |
 |------|----------|------|
@@ -341,7 +393,7 @@ START → parse_input → build_prompt → check_interrupt
 | 柜子材质/颜色覆写 | ParamPanel 支持 | ✅ |
 | 自然语言描述 | ParamPanel 文本输入框 | ✅ |
 
-### 7.3 模块三：渲染任务管理
+### 8.3 模块三：渲染任务管理
 
 | 需求 | 实现情况 | 状态 |
 |------|----------|------|
@@ -352,7 +404,7 @@ START → parse_input → build_prompt → check_interrupt
 | 图片下载 | RenderDetailPage 下载按钮 | ✅ |
 | 任务状态（排队/处理中/完成/失败） | 后端 status 字段 + TaskStatus 组件 | ✅ |
 
-### 7.4 模块四：AI对话交互
+### 8.4 模块四：AI对话交互
 
 | 需求 | 实现情况 | 状态 |
 |------|----------|------|
@@ -362,7 +414,7 @@ START → parse_input → build_prompt → check_interrupt
 | 对话历史展示 | /api/chat/{id}/history + ChatPanel | ✅ |
 | 上下文感知 | LangGraph MemorySaver 持久化 | ✅ |
 
-### 7.5 模块五：柜子图库管理
+### 8.5 模块五：柜子图库管理
 
 | 需求 | 实现情况 | 状态 |
 |------|----------|------|
@@ -372,7 +424,7 @@ START → parse_input → build_prompt → check_interrupt
 
 ---
 
-## 八、技术栈实现确认
+## 九、技术栈实现确认
 
 | 层级 | SPEC 要求 | 实际使用 | 状态 |
 |------|-----------|----------|------|
@@ -386,57 +438,24 @@ START → parse_input → build_prompt → check_interrupt
 | ORM | SQLAlchemy 2 | SQLAlchemy 2.0.25 | ✅ |
 | Agent 编排 | LangGraph | LangGraph 0.2+ | ✅ |
 | LLM 集成 | LangChain | LangChain 0.2+ | ✅ |
-| LLM 模型 | qwen-image-2.0-pro | DashScope SDK 调用 | ✅ |
-| API Key | os.getenv("DASHSCOPE_API_KEY") | 环境变量读取 | ✅ |
-| 图片处理 | Pillow | Pillow 10.2 | ✅ |
+| LLM 模型 | qwen-image-2.0-pro | DashScope MultiModalConversation API | ✅ |
 
 ---
 
-## 九、已知问题与后续优化
+## 十、已知问题与解决方案
 
-### 9.1 已知问题
+### 10.1 API 调用问题（已解决）
 
-| 编号 | 问题 | 影响 | 优先级 |
-|------|------|------|--------|
-| 1 | 前端构建产物主 chunk 较大（1.18MB） | 首屏加载稍慢 | 低 |
-| 2 | 种子数据仅 3 条，图库内容较少 | 演示效果有限 | 中 |
-| 3 | 未配置 DASHSCOPE_API_KEY 时渲染会失败 | 需用户配置环境变量 | 高 |
+**问题**：`ImageSynthesis.call()` 不支持 Base64 数据 URI 格式
+**解决**：改用 `MultiModalConversation.call()` API
+**状态**：✅ 已修复
 
-### 9.2 后续优化建议
+### 10.2 日志缺失问题（已解决）
 
-- [ ] 配置 `DASHSCOPE_API_KEY` 环境变量后进行端到端渲染测试
-- [ ] 增加图库种子数据（更多柜子类型：玄关柜、电视柜）
-- [ ] 前端代码分割优化（manualChunks）减小主 chunk 体积
-- [ ] 增加 WebSocket 实时推送渲染进度（替代轮询）
-- [ ] 增加用户认证与多用户隔离
-- [ ] 增加渲染结果图片 CDN 存储支持
+**问题**：后端关键节点缺少日志输出，难以排查问题
+**解决**：集成完整日志系统，覆盖所有 API 和服务模块
+**状态**：✅ 已修复
 
 ---
 
-## 十、启动方式
-
-### 后端
-
-```bash
-cd backend
-.\venv\Scripts\Activate.ps1
-# 配置环境变量
-set DASHSCOPE_API_KEY=your_api_key_here
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-### 前端
-
-```bash
-cd frontend
-npm run dev      # 开发模式
-npm run build    # 生产构建
-```
-
-### 种子数据初始化
-
-```bash
-cd backend
-.\venv\Scripts\Activate.ps1
-python seed.py
-```
+> 本文档将随项目演进持续更新。

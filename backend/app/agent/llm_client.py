@@ -10,6 +10,7 @@ class LLMClient:
     def __init__(self):
         self.api_key = os.getenv("DASHSCOPE_API_KEY", "")
         self.model_name = "qwen-image-2.0-pro"
+        logger.info(f"[LLM客户端] 初始化完成, model={self.model_name}, api_key={'已配置' if self.api_key else '未配置'}")
 
     async def generate_image(
         self,
@@ -18,6 +19,9 @@ class LLMClient:
         negative_prompt: str = "",
         size: str = "1024*1024",
     ) -> dict:
+        logger.info(f"[LLM图片生成] 开始调用, model={self.model_name}, size={size}")
+        logger.info(f"[LLM图片生成] prompt长度={len(prompt)}, reference_image={'有' if reference_image_path else '无'}")
+
         try:
             import dashscope
             from dashscope import MultiModalConversation
@@ -31,6 +35,9 @@ class LLMClient:
                     with open(full_path, "rb") as f:
                         image_data = base64.b64encode(f.read()).decode("utf-8")
                         content.append({"image": f"data:image/png;base64,{image_data}"})
+                    logger.info(f"[LLM图片生成] 参考图片已加载: {full_path}, base64长度={len(image_data)}")
+                else:
+                    logger.warning(f"[LLM图片生成] 参考图片不存在: {full_path}")
 
             full_prompt = prompt
             if negative_prompt:
@@ -39,7 +46,7 @@ class LLMClient:
 
             messages = [{"role": "user", "content": content}]
 
-            logger.info(f"调用 LLM 渲染: prompt={full_prompt[:200]}...")
+            logger.info(f"[LLM图片生成] 调用 MultiModalConversation.call, content项数={len(content)}")
 
             response = MultiModalConversation.call(
                 model=self.model_name,
@@ -49,31 +56,37 @@ class LLMClient:
                 watermark=False,
             )
 
+            logger.info(f"[LLM图片生成] API响应: status_code={response.status_code}")
+
             if response.status_code == 200 and response.output:
                 choices = response.output.get("choices", [])
+                logger.info(f"[LLM图片生成] 返回choices数={len(choices)}")
                 if choices:
                     msg_content = choices[0].get("message", {}).get("content", [])
                     for item in msg_content:
                         if "image" in item:
+                            logger.info(f"[LLM图片生成] 图片URL生成成功")
                             return {
                                 "success": True,
                                 "image_url": item["image"],
                                 "image_base64": None,
                             }
+                logger.warning(f"[LLM图片生成] API返回结果为空")
                 return {"success": False, "error": "API 返回结果为空"}
             else:
                 error_msg = response.message if hasattr(response, "message") else str(response)
-                logger.error(f"LLM API 调用失败: {error_msg}")
+                logger.error(f"[LLM图片生成] API调用失败: {error_msg}")
                 return {"success": False, "error": error_msg}
 
         except ImportError:
-            logger.warning("dashscope 未安装，使用模拟模式")
+            logger.warning("[LLM图片生成] dashscope 未安装，使用模拟模式")
             return self._mock_generate(prompt, reference_image_path)
         except Exception as e:
-            logger.error(f"LLM API 调用异常: {e}")
+            logger.error(f"[LLM图片生成] 调用异常: {e}", exc_info=True)
             return {"success": False, "error": str(e)}
 
     def _mock_generate(self, prompt: str, reference_image_path: Optional[str] = None) -> dict:
+        logger.info(f"[LLM图片生成] 模拟模式生成")
         return {
             "success": True,
             "image_url": reference_image_path or "",
@@ -86,6 +99,8 @@ class LLMClient:
         messages: list[dict],
         system_prompt: str = "",
     ) -> dict:
+        logger.info(f"[LLM对话] 开始调用, messages数={len(messages)}, system_prompt长度={len(system_prompt)}")
+
         try:
             import dashscope
             from dashscope import Generation
@@ -101,28 +116,35 @@ class LLMClient:
                     "content": msg.get("content", ""),
                 })
 
+            logger.info(f"[LLM对话] 格式化消息数={len(formatted_messages)}")
+
             response = Generation.call(
                 model="qwen-plus",
                 messages=formatted_messages,
                 result_format="message",
             )
 
+            logger.info(f"[LLM对话] API响应: status_code={response.status_code}")
+
             if response.status_code == 200 and response.output:
                 content = response.output.get("choices", [{}])[0].get("message", {}).get("content", "")
+                logger.info(f"[LLM对话] 响应内容长度={len(content)}")
                 return {"success": True, "content": content}
             else:
                 error_msg = response.message if hasattr(response, "message") else str(response)
+                logger.error(f"[LLM对话] API调用失败: {error_msg}")
                 return {"success": False, "content": "", "error": error_msg}
 
         except ImportError:
-            logger.warning("dashscope 未安装，使用模拟模式")
+            logger.warning("[LLM对话] dashscope 未安装，使用模拟模式")
             return self._mock_chat(messages)
         except Exception as e:
-            logger.error(f"LLM 对话调用异常: {e}")
+            logger.error(f"[LLM对话] 调用异常: {e}", exc_info=True)
             return {"success": False, "content": "", "error": str(e)}
 
     def _mock_chat(self, messages: list[dict]) -> dict:
         last_msg = messages[-1]["content"] if messages else ""
+        logger.info(f"[LLM对话] 模拟模式响应: {last_msg[:30]}...")
         return {
             "success": True,
             "content": f"已收到您的需求：'{last_msg}'。正在根据您的要求调整渲染参数...",

@@ -1,4 +1,5 @@
 import os
+import logging
 import shutil
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -11,16 +12,24 @@ from app.utils.image_utils import (
     get_image_size, is_allowed_image,
 )
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
 @router.post("/upload")
 async def upload_image(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    logger.info(f"[图片上传] filename={file.filename}, content_type={file.content_type}")
+
     if not file.filename or not is_allowed_image(file.filename):
+        logger.warning(f"[图片上传] 不支持的文件格式: {file.filename}")
         raise HTTPException(status_code=400, detail="不支持的文件格式，仅支持 JPG/PNG/WebP")
 
     content = await file.read()
+    file_size_mb = len(content) / (1024 * 1024)
+    logger.info(f"[图片上传] 文件大小: {file_size_mb:.2f}MB")
+
     if len(content) > settings.MAX_UPLOAD_SIZE_MB * 1024 * 1024:
+        logger.warning(f"[图片上传] 文件大小超过限制: {file_size_mb:.2f}MB > {settings.MAX_UPLOAD_SIZE_MB}MB")
         raise HTTPException(status_code=400, detail=f"文件大小超过 {settings.MAX_UPLOAD_SIZE_MB}MB 限制")
 
     filename = generate_unique_filename(file.filename)
@@ -31,6 +40,8 @@ async def upload_image(file: UploadFile = File(...), db: Session = Depends(get_d
     file_path = os.path.join(save_dir, filename)
     with open(file_path, "wb") as f:
         f.write(content)
+
+    logger.info(f"[图片上传] 文件保存成功: {file_path}")
 
     rel_path = os.path.join(subdir, filename).replace("\\", "/")
     width, height = get_image_size(file_path)
@@ -54,6 +65,8 @@ async def upload_image(file: UploadFile = File(...), db: Session = Depends(get_d
     db.commit()
     db.refresh(gallery_image)
 
+    logger.info(f"[图片上传] 图片入库成功: image_id={gallery_image.image_id}, size={width}x{height}")
+
     return {
         "code": 200,
         "message": "上传成功",
@@ -71,10 +84,14 @@ async def upload_image(file: UploadFile = File(...), db: Session = Depends(get_d
 
 @router.get("/gallery")
 def get_gallery(category: str = None, db: Session = Depends(get_db)):
+    logger.info(f"[获取图片列表] category={category}")
+
     query = db.query(GalleryImage)
     if category:
         query = query.filter(GalleryImage.category == category)
     images = query.order_by(GalleryImage.created_at.desc()).all()
+
+    logger.info(f"[获取图片列表] 返回 {len(images)} 张图片")
 
     return {
         "code": 200,
@@ -95,9 +112,14 @@ def get_gallery(category: str = None, db: Session = Depends(get_db)):
 
 @router.get("/gallery/{image_id}")
 def get_gallery_detail(image_id: str, db: Session = Depends(get_db)):
+    logger.info(f"[获取图片详情] image_id={image_id}")
+
     img = db.query(GalleryImage).filter(GalleryImage.image_id == image_id).first()
     if not img:
+        logger.warning(f"[获取图片详情] 图片不存在: {image_id}")
         raise HTTPException(status_code=404, detail="图片不存在")
+
+    logger.info(f"[获取图片详情] image_id={image_id}, name={img.name}, size={img.width}x{img.height}")
 
     return {
         "code": 200,

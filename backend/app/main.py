@@ -1,4 +1,5 @@
 import os
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -6,6 +7,14 @@ from fastapi.staticfiles import StaticFiles
 from app.config import settings
 from app.database import init_db
 from app.routers import images, render, chat, params
+
+# 配置日志
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="LLMImageRender API",
@@ -32,12 +41,25 @@ app.include_router(render.router, prefix="/api/render", tags=["render"])
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 app.include_router(params.router, prefix="/api/params", tags=["params"])
 
+logger.info("=" * 50)
+logger.info("[应用启动] LLMImageRender API 初始化中...")
+logger.info(f"[应用配置] UPLOAD_DIR={settings.UPLOAD_DIR}")
+logger.info(f"[应用配置] GALLERY_DIR={settings.GALLERY_DIR}")
+logger.info(f"[应用配置] RESULT_DIR={settings.RESULT_DIR}")
+logger.info(f"[应用配置] CORS_ORIGINS={settings.CORS_ORIGINS}")
+logger.info(f"[应用配置] MAX_UPLOAD_SIZE_MB={settings.MAX_UPLOAD_SIZE_MB}")
+
 
 @app.on_event("startup")
 def on_startup():
+    logger.info("[应用启动] 初始化数据库...")
     init_db()
+    logger.info("[应用启动] 数据库初始化完成")
+    logger.info("[应用启动] LLMImageRender API 启动成功!")
+    logger.info("=" * 50)
 
 
 @app.get("/api/health")
 def health_check():
+    logger.debug("[健康检查] 收到健康检查请求")
     return {"status": "ok", "service": "LLMImageRender"}

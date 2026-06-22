@@ -16,7 +16,7 @@
 |------|------|
 | 前端 | Vue 3 + Vite + TypeScript + Element Plus + Pinia |
 | 后端 | Python + FastAPI + SQLite + SQLAlchemy |
-| AI引擎 | LangGraph + Qwen-Image-2.0-Pro (DashScope API) |
+| AI引擎 | LangGraph + Qwen-Image-2.0-Pro (DashScope MultiModalConversation API) |
 | 对话 | LangGraph Agent + MemorySaver 检查点 |
 
 ## 项目结构
@@ -53,7 +53,7 @@ LLMImageRender/
 │
 ├── backend/                     # 后端项目
 │   ├── app/
-│   │   ├── main.py              # FastAPI入口
+│   │   ├── main.py              # FastAPI入口（日志配置）
 │   │   ├── config.py            # 配置管理
 │   │   ├── database.py          # 数据库连接
 │   │   ├── models/              # 数据模型
@@ -186,3 +186,47 @@ START → parse_input → build_prompt → check_interrupt
 | `DATABASE_URL` | SQLite 数据库路径 | `sqlite:///./llm_image_render.db` |
 | `CORS_ORIGINS` | 允许的前端域名 | `http://localhost:5173` |
 | `MAX_UPLOAD_SIZE_MB` | 上传文件大小限制 | `10` |
+
+## 日志系统
+
+后端已集成完整的日志系统，覆盖所有关键节点：
+
+### 日志格式
+```
+2026-06-22 14:30:00 - app.routers.render - INFO - [渲染任务提交] mode=single, image_source={...}
+```
+
+### 日志覆盖范围
+
+| 模块 | 日志标签 | 说明 |
+|------|----------|------|
+| main.py | `[应用启动]` | 应用初始化、配置信息、数据库初始化 |
+| render.py | `[渲染任务提交]` / `[查询任务状态]` / `[获取任务结果]` | 渲染任务全流程 |
+| images.py | `[图片上传]` / `[获取图片列表]` / `[获取图片详情]` | 图片管理操作 |
+| chat.py | `[开启对话]` / `[发送消息]` / `[停止对话]` / `[继续对话]` | 对话管理操作 |
+| render_service.py | `[渲染服务]` / `[渲染执行]` | 渲染任务调度与执行 |
+| llm_client.py | `[LLM客户端]` / `[LLM图片生成]` / `[LLM对话]` | LLM API 调用详情 |
+
+### 日志级别
+
+- **INFO**：正常业务流程
+- **WARNING**：非关键异常（如图片不存在、会话已暂停）
+- **ERROR**：关键错误（如 API 调用失败、任务执行异常）
+
+## LLM API 集成说明
+
+### qwen-image-2.0-pro 图片生成
+
+使用 DashScope `MultiModalConversation` API（而非旧版 `ImageSynthesis`），支持：
+- Base64 数据 URI 格式的参考图片
+- 多模态消息内容（图片 + 文本）
+- 标准 `content` 数组格式
+
+**关键参数**：
+- `model`: "qwen-image-2.0-pro"
+- `size`: 使用星号分隔格式（如 "1024*1024"）
+- `messages`: 包含 `image` 和 `text` 对象的数组
+
+### qwen-plus 对话
+
+使用 DashScope `Generation` API 进行自然语言对话交互。

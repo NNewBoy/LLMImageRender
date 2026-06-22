@@ -1,4 +1,5 @@
 import json
+import logging
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -8,6 +9,7 @@ from app.database import get_db
 from app.models.task import RenderTask
 from app.services.render_service import render_service
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -19,16 +21,21 @@ class RenderSubmitRequest(BaseModel):
 
 @router.post("/submit")
 async def submit_render(req: RenderSubmitRequest, db: Session = Depends(get_db)):
+    logger.info(f"[渲染任务提交] mode={req.mode}, image_source={req.image_source}, params={req.params}")
+
     if req.mode not in ("single", "scene"):
+        logger.warning(f"[渲染任务提交] 无效的渲染模式: {req.mode}")
         raise HTTPException(status_code=400, detail="渲染模式必须为 single 或 scene")
 
     image_id = req.image_source.get("image_id")
     if not image_id:
+        logger.warning(f"[渲染任务提交] 缺少图片ID")
         raise HTTPException(status_code=400, detail="缺少图片ID")
 
     from app.models.gallery import GalleryImage
     gallery_img = db.query(GalleryImage).filter(GalleryImage.image_id == image_id).first()
     if not gallery_img:
+        logger.warning(f"[渲染任务提交] 图片不存在: {image_id}")
         raise HTTPException(status_code=400, detail="图片不存在")
 
     task = RenderTask(
@@ -42,7 +49,10 @@ async def submit_render(req: RenderSubmitRequest, db: Session = Depends(get_db))
     db.commit()
     db.refresh(task)
 
+    logger.info(f"[渲染任务提交] 任务创建成功: task_id={task.task_id}, image={gallery_img.file_path}")
+
     render_service.submit_task(task.task_id)
+    logger.info(f"[渲染任务提交] 任务已提交到渲染服务: task_id={task.task_id}")
 
     return {
         "code": 200,
@@ -57,9 +67,14 @@ async def submit_render(req: RenderSubmitRequest, db: Session = Depends(get_db))
 
 @router.get("/task/{task_id}")
 def get_task_status(task_id: str, db: Session = Depends(get_db)):
+    logger.info(f"[查询任务状态] task_id={task_id}")
+
     task = db.query(RenderTask).filter(RenderTask.task_id == task_id).first()
     if not task:
+        logger.warning(f"[查询任务状态] 任务不存在: {task_id}")
         raise HTTPException(status_code=404, detail="任务不存在")
+
+    logger.info(f"[查询任务状态] task_id={task_id}, status={task.status}, progress={task.progress}")
 
     return {
         "code": 200,
@@ -80,13 +95,20 @@ def get_task_status(task_id: str, db: Session = Depends(get_db)):
 
 @router.get("/task/{task_id}/result")
 def get_task_result(task_id: str, db: Session = Depends(get_db)):
+    logger.info(f"[获取任务结果] task_id={task_id}")
+
     task = db.query(RenderTask).filter(RenderTask.task_id == task_id).first()
     if not task:
+        logger.warning(f"[获取任务结果] 任务不存在: {task_id}")
         raise HTTPException(status_code=404, detail="任务不存在")
     if task.status != "completed":
+        logger.warning(f"[获取任务结果] 任务未完成: task_id={task_id}, status={task.status}")
         raise HTTPException(status_code=400, detail="任务尚未完成")
     if not task.result_image:
+        logger.warning(f"[获取任务结果] 结果图片不存在: task_id={task_id}")
         raise HTTPException(status_code=404, detail="结果图片不存在")
+
+    logger.info(f"[获取任务结果] task_id={task_id}, result_image={task.result_image}")
 
     return {
         "code": 200,
@@ -100,6 +122,8 @@ def get_task_result(task_id: str, db: Session = Depends(get_db)):
 
 @router.get("/history")
 def get_history(page: int = 1, page_size: int = 20, db: Session = Depends(get_db)):
+    logger.info(f"[获取渲染历史] page={page}, page_size={page_size}")
+
     total = db.query(RenderTask).count()
     tasks = (
         db.query(RenderTask)
@@ -108,6 +132,8 @@ def get_history(page: int = 1, page_size: int = 20, db: Session = Depends(get_db
         .limit(page_size)
         .all()
     )
+
+    logger.info(f"[获取渲染历史] 共 {total} 条记录, 返回 {len(tasks)} 条")
 
     return {
         "code": 200,
@@ -135,12 +161,17 @@ def get_history(page: int = 1, page_size: int = 20, db: Session = Depends(get_db
 
 @router.delete("/task/{task_id}")
 def delete_task(task_id: str, db: Session = Depends(get_db)):
+    logger.info(f"[删除任务] task_id={task_id}")
+
     task = db.query(RenderTask).filter(RenderTask.task_id == task_id).first()
     if not task:
+        logger.warning(f"[删除任务] 任务不存在: {task_id}")
         raise HTTPException(status_code=404, detail="任务不存在")
 
     render_service.cancel_task(task_id)
     db.delete(task)
     db.commit()
+
+    logger.info(f"[删除任务] 任务已删除: task_id={task_id}")
 
     return {"code": 200, "message": "任务已删除"}
