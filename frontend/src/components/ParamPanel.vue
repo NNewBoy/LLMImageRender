@@ -35,8 +35,10 @@
         </el-form-item>
 
         <el-form-item label="颜色">
-          <el-color-picker v-model="localParams.color" />
-          <span class="color-value">{{ localParams.color }}</span>
+          <div class="bg-current">
+            <el-color-picker v-model="localParams.color" />
+            <span class="color-value">{{ localParams.color }}</span>
+          </div>
         </el-form-item>
 
         <el-form-item v-if="showBackground" label="背景颜色" class="full-span">
@@ -87,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, watch, onMounted, ref } from 'vue'
+import { reactive, watch, onMounted, ref, nextTick } from 'vue'
 import { useRenderStore } from '@/stores/render'
 import type { RenderParams } from '@/types'
 import api from '@/api'
@@ -128,11 +130,31 @@ const localParams = reactive<RenderParams>({
   },
 })
 
+// 用户修改参数 → 同步到 store
 watch(localParams, (val) => {
   renderStore.updateParams({ ...val })
 }, { deep: true })
 
+// 从 store 同一次性赋值到 localParams（覆盖 URL 参数写入的结果）
+function syncFromStore() {
+  const s = renderStore.params
+  localParams.style = s.style
+  localParams.lighting = s.lighting
+  localParams.view_angle = s.view_angle
+  localParams.room_type = s.room_type || ''
+  localParams.material = s.material || ''
+  localParams.color = s.color || ''
+  localParams.background_color = s.background_color || '#FFFFFF'
+  localParams.description = s.description || ''
+  if (localParams.cabinet_size && s.cabinet_size) {
+    localParams.cabinet_size.width = s.cabinet_size.width || 1200
+    localParams.cabinet_size.height = s.cabinet_size.height || 2200
+    localParams.cabinet_size.depth = s.cabinet_size.depth || 600
+  }
+}
+
 onMounted(async () => {
+  // 加载预设选项
   try {
     const res: any = await api.get('/params/presets')
     if (res.code === 200) {
@@ -141,6 +163,9 @@ onMounted(async () => {
   } catch (e) {
     console.error('加载预设参数失败', e)
   }
+  // nextTick 确保父组件的 onMounted（URL 参数写入 store）已执行完毕
+   await nextTick()
+   syncFromStore()
 })
 </script>
 

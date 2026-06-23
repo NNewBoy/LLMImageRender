@@ -1,4 +1,5 @@
 import os
+import hashlib
 import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -43,15 +44,19 @@ def seed():
             full_path = img_data["file_path"].lstrip("/")
             width, height = None, None
             file_size = None
+            file_hash = None
             if os.path.exists(full_path):
                 width, height = get_image_size(full_path)
                 file_size = os.path.getsize(full_path)
+                with open(full_path, "rb") as f:
+                    file_hash = hashlib.md5(f.read()).hexdigest()
 
             image = GalleryImage(
                 name=img_data["name"],
                 category=img_data["category"],
                 file_path=img_data["file_path"],
                 thumbnail_path=img_data["thumbnail_path"],
+                file_hash=file_hash,
                 width=width,
                 height=height,
                 file_size=file_size,

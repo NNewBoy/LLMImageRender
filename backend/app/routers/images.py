@@ -1,4 +1,5 @@
 import os
+import hashlib
 import logging
 import shutil
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
@@ -32,6 +33,25 @@ async def upload_image(file: UploadFile = File(...), db: Session = Depends(get_d
         logger.warning(f"[图片上传] 文件大小超过限制: {file_size_mb:.2f}MB > {settings.MAX_UPLOAD_SIZE_MB}MB")
         raise HTTPException(status_code=400, detail=f"文件大小超过 {settings.MAX_UPLOAD_SIZE_MB}MB 限制")
 
+    # 计算文件哈希，检查是否已存在
+    file_hash = hashlib.md5(content).hexdigest()
+    existing = db.query(GalleryImage).filter(GalleryImage.file_hash == file_hash).first()
+    if existing:
+        logger.info(f"[图片上传] 图片已存在，跳过保存: image_id={existing.image_id}, hash={file_hash}")
+        return {
+            "code": 200,
+            "message": "图片已存在",
+            "data": {
+                "image_id": existing.image_id,
+                "name": existing.name,
+                "url": existing.file_path,
+                "thumbnail_url": existing.thumbnail_path,
+                "width": existing.width,
+                "height": existing.height,
+                "file_size": existing.file_size,
+            },
+        }
+
     filename = generate_unique_filename(file.filename)
     subdir = get_upload_subdir()
     save_dir = os.path.join(settings.UPLOAD_DIR, subdir)
@@ -57,6 +77,7 @@ async def upload_image(file: UploadFile = File(...), db: Session = Depends(get_d
         category="uploaded",
         file_path=f"/static/uploads/{rel_path}",
         thumbnail_path=f"/static/uploads/{subdir.replace(chr(92), '/')}/thumbnails/{filename}",
+        file_hash=file_hash,
         width=width,
         height=height,
         file_size=file_size,
@@ -65,7 +86,7 @@ async def upload_image(file: UploadFile = File(...), db: Session = Depends(get_d
     db.commit()
     db.refresh(gallery_image)
 
-    logger.info(f"[图片上传] 图片入库成功: image_id={gallery_image.image_id}, size={width}x{height}")
+    logger.info(f"[图片上传] 图片入库成功: image_id={gallery_image.image_id}, size={width}x{height}, hash={file_hash}")
 
     return {
         "code": 200,

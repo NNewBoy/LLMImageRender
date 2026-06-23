@@ -17,6 +17,7 @@ class GalleryImage(Base):
     category = Column(String(32), nullable=False)
     file_path = Column(String(512), nullable=False)
     thumbnail_path = Column(String(512), nullable=True)
+    file_hash = Column(String(64), nullable=True, index=True)
     width = Column(Integer, nullable=True)
     height = Column(Integer, nullable=True)
     file_size = Column(Integer, nullable=True)

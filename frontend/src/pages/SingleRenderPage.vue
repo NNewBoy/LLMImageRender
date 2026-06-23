@@ -41,18 +41,39 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { useRenderStore } from '@/stores/render'
 import ImageUploader from '@/components/ImageUploader.vue'
 import GalleryPicker from '@/components/GalleryPicker.vue'
 import ImageViewer from '@/components/ImageViewer.vue'
 import ParamPanel from '@/components/ParamPanel.vue'
 import SubmitBar from '@/components/SubmitBar.vue'
+import { parseUrlParams, applyExternalImage } from '@/utils/urlParams'
 
+const route = useRoute()
 const renderStore = useRenderStore()
 const activeTab = ref('upload')
 
-onMounted(() => {
+onMounted(async () => {
   renderStore.setMode('single')
+
+  const urlResult = parseUrlParams(route.query, route.hash)
+
+  // 应用 URL 中的渲染参数
+  if (Object.keys(urlResult.params).length > 0) {
+    renderStore.updateParams(urlResult.params)
+  }
+
+  // 应用外部图片
+  if (urlResult.hasExternalImage) {
+    const ok = await applyExternalImage(renderStore, urlResult.imageUrl, urlResult.imageBase64)
+    if (ok) {
+      ElMessage.success('外部图片已加载')
+    } else {
+      ElMessage.error('外部图片加载失败')
+    }
+  }
 })
 
 const onImageUploaded = (data: any) => {

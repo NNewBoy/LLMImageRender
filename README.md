@@ -45,6 +45,8 @@ LLMImageRender/
 │   │   ├── router/              # 路由配置
 │   │   ├── styles/              # 全局样式
 │   │   │   └── theme.css        # Glassmorphism + Dark Mode 主题
+│   │   ├── utils/               # 工具函数
+│   │   │   └── urlParams.ts     # URL 参数解析（外部平台对接）
 │   │   └── types/               # TypeScript类型
 │   ├── package.json
 │   └── vite.config.ts
@@ -169,11 +171,54 @@ npm run dev
 
 打开浏览器访问 http://localhost:5173
 
+## 外部平台对接（URL 参数）
+
+渲染页面支持通过 URL 查询参数（query string）传入所有渲染参数和图片，方便外部平台嵌入跳转。
+
+### 基本用法
+
+```
+http://localhost:5173/render/single?<params>
+http://localhost:5173/render/scene?<params>
+```
+
+### 支持的参数
+
+| 参数 | 说明 | 示例 |
+|------|------|------|
+| `image_url` | 图片 URL 地址 | `image_url=https://example.com/cabinet.png` |
+| `image_base64` | 图片 Base64（data URI） | `image_base64=data:image/png;base64,iVBOR...` |
+| `style` | 渲染风格 | `style=nordic` |
+| `lighting` | 光照条件 | `lighting=warm` |
+| `view_angle` | 视角 | `view_angle=front_45` |
+| `room_type` | 户型（场景渲染） | `room_type=bedroom` |
+| `material` | 材质 | `material=oak_wood` |
+| `color` | 颜色（支持 # 开头） | `color=#8B7355` |
+| `bg_color` | 背景颜色（支持 # 开头） | `bg_color=#FFFFFF` |
+| `description` | 额外描述 | `description=modern+style` |
+| `width` | 柜子宽度 (mm) | `width=1200` |
+| `height` | 柜子高度 (mm) | `height=2200` |
+| `depth` | 柜子深度 (mm) | `depth=600` |
+
+> 有传参则使用传入值，无传参则使用默认值。`image_url` 和 `image_base64` 二选一。颜色值中的 `#` 无需 URL 编码，代码自动处理。
+
+### 示例
+
+```bash
+# 单品渲染：通过 URL 传图 + 自定义风格
+http://localhost:5173/render/single?image_url=https://example.com/cabinet.png&style=nordic&lighting=warm&material=oak_wood
+http://localhost:5173/render/single?image_url=https://d00.paixin.com/thumbs/1765561/28728719/staff_1024.jpg&style=japanese&lighting=warm&view_angle=front_45&material=oak_wood&color=%238B7355&bg_color=%23FFFFFF&description=modern&width=800&height=2000&depth=400
+
+# 场景渲染：通过 base64 传图 + 户型和尺寸
+http://localhost:5173/render/scene?image_base64=data:image/png;base64,...&room_type=bedroom&width=800&height=2000&depth=500
+http://localhost:5173/render/scene?image_url=https://d00.paixin.com/thumbs/1765561/28728719/staff_1024.jpg&style=industrial&lighting=cool&view_angle=top&room_type=study&material=metal&color=%238B7354&description=bright-colored&width=810&height=2010&depth=410
+```
+
 ## API 端点
 
 | 方法 | 端点 | 说明 |
 |------|------|------|
-| POST | `/api/images/upload` | 上传图片 |
+| POST | `/api/images/upload` | 上传图片（MD5 去重，相同图片不重复保存） |
 | GET | `/api/images/gallery` | 获取图库 |
 | POST | `/api/render/submit` | 提交渲染任务 |
 | GET | `/api/render/task/:id` | 查询任务状态 |
