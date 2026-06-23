@@ -72,13 +72,13 @@ const handleClick = (event: MouseEvent) => {
   justify-content: center;
   height: 100%;
   min-height: 100px;
-  color: #909399;
+  color: var(--text-muted);
   font-size: 13px;
+  gap: 8px;
 }
 
 .image-error .el-icon {
   font-size: 24px;
-  margin-bottom: 8px;
 }
 
 .image-loading {
@@ -91,6 +91,6 @@ const handleClick = (event: MouseEvent) => {
 
 .image-loading .el-icon {
   font-size: 24px;
-  color: #409eff;
+  color: var(--accent-primary-light);
 }
 </style>

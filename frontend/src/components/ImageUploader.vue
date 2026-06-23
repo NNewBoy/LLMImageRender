@@ -77,26 +77,27 @@ const handleFileChange = async (file: any) => {
 .upload-placeholder {
   padding: 40px;
   text-align: center;
-  color: #909399;
+  color: var(--text-muted);
 }
 
 .upload-text {
   margin-top: 12px;
   font-size: 15px;
-  color: #606266;
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .upload-hint {
   margin-top: 8px;
   font-size: 12px;
-  color: #c0c4cc;
+  color: var(--text-faint);
 }
 
 .upload-preview {
   position: relative;
   max-height: 300px;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
 .upload-preview img {
@@ -109,13 +110,14 @@ const handleFileChange = async (file: any) => {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   font-size: 14px;
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.25s ease;
 }
 
 .upload-preview:hover .preview-mask {
@@ -128,6 +130,6 @@ const handleFileChange = async (file: any) => {
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  color: #606266;
+  color: var(--text-muted);
 }
 </style>

@@ -1,1 +1,0 @@
-import{a as r}from"./index-Cp3aOBTg.js";async function a(t){return r.post("/render/submit",t)}async function n(t){return r.get(`/render/task/${t}`)}async function i(t=1,e=20){return r.get("/render/history",{params:{page:t,page_size:e}})}export{n as a,i as g,a as s};

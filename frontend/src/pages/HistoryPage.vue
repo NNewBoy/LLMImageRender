@@ -14,7 +14,7 @@
       />
     </div>
 
-    <div v-if="!loading && tasks.length === 0" class="empty-state">
+    <div v-if="!loading && tasks.length === 0" class="empty-state glass-card">
       <el-icon :size="48"><FolderOpened /></el-icon>
       <p>暂无渲染记录</p>
       <el-button type="primary" @click="$router.push('/')">开始渲染</el-button>
@@ -64,7 +64,7 @@ onMounted(loadHistory)
 
 <style scoped>
 .history-page {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
@@ -72,40 +72,58 @@ onMounted(loadHistory)
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .page-header h2 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #303133;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .total-count {
   font-size: 13px;
-  color: #909399;
+  color: var(--text-muted);
 }
 
 .history-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
 }
 
 .empty-state {
   text-align: center;
   padding: 60px;
-  color: #c0c4cc;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
 .empty-state p {
-  margin: 12px 0;
   font-size: 14px;
 }
 
 .pagination {
-  margin-top: 24px;
+  margin-top: 32px;
   display: flex;
   justify-content: center;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .history-grid {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (max-width: 375px) {
+  .history-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="submit-bar">
+  <div class="submit-bar glass-card">
     <el-button
       type="primary"
       size="large"
@@ -7,7 +7,7 @@
       :disabled="!canSubmit"
       @click="handleSubmit"
     >
-      <el-icon><Upload /></el-icon>
+      <el-icon v-if="!loading"><Upload /></el-icon>
       提交渲染
     </el-button>
     <span v-if="!canSubmit" class="hint">请先选择或上传图片</span>
@@ -59,11 +59,12 @@ const handleSubmit = async () => {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px 0;
+  padding: 16px 20px;
+  border-radius: var(--radius-lg);
 }
 
 .hint {
   font-size: 13px;
-  color: #c0c4cc;
+  color: var(--text-faint);
 }
 </style>

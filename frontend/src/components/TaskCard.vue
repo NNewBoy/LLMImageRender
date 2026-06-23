@@ -1,5 +1,5 @@
 <template>
-  <div class="task-card" @click="$emit('click')">
+  <div class="task-card glass-card" @click="$emit('click')">
     <div class="task-thumbnail">
       <ImageViewer
         :src="task.result_image_url || task.original_image_url"
@@ -47,59 +47,66 @@ const formatTime = (time: string) => {
 
 <style scoped>
 .task-card {
-  border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #e4e7ed;
   cursor: pointer;
-  transition: box-shadow 0.3s;
-  background: #fff;
-}
-
-.task-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .task-thumbnail {
   position: relative;
   height: 180px;
   overflow: hidden;
-  background: #f5f7fa;
+  background: rgba(0, 0, 0, 0.2);
 }
 
-.task-thumbnail img {
+.task-thumbnail :deep(img) {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.task-card:hover .task-thumbnail :deep(img) {
+  transform: scale(1.05);
 }
 
 .task-status-badge {
   position: absolute;
   top: 8px;
   right: 8px;
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 3px 10px;
+  border-radius: 100px;
   font-size: 11px;
+  font-weight: 600;
   color: #fff;
+  backdrop-filter: blur(8px);
 }
 
-.task-status-badge.completed { background: #67c23a; }
-.task-status-badge.processing { background: #409eff; }
-.task-status-badge.queued { background: #e6a23c; }
-.task-status-badge.failed { background: #f56c6c; }
+.task-status-badge.completed {
+  background: rgba(34, 197, 94, 0.85);
+}
+.task-status-badge.processing {
+  background: rgba(99, 102, 241, 0.85);
+}
+.task-status-badge.queued {
+  background: rgba(245, 158, 11, 0.85);
+}
+.task-status-badge.failed {
+  background: rgba(239, 68, 68, 0.85);
+}
 
 .task-info {
-  padding: 10px 12px;
+  padding: 12px 14px;
 }
 
 .task-mode {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .task-time {
   font-size: 12px;
-  color: #c0c4cc;
+  color: var(--text-faint);
   margin-top: 4px;
 }
 </style>

@@ -1,14 +1,15 @@
 <template>
   <div class="single-render-page">
     <div class="page-header">
-      <el-button text @click="$router.push('/')">
-        <el-icon><ArrowLeft /></el-icon> 返回
-      </el-button>
+      <button class="back-btn" @click="$router.push('/')">
+        <el-icon :size="18"><ArrowLeft /></el-icon>
+        <span>返回</span>
+      </button>
       <h2>单品渲染</h2>
     </div>
 
     <div class="render-content">
-      <el-card class="image-card">
+      <el-card class="image-card glass-card">
         <el-tabs v-model="activeTab" type="border-card">
           <el-tab-pane label="上传图片" name="upload">
             <ImageUploader @uploaded="onImageUploaded" />
@@ -27,7 +28,7 @@
         </div>
       </el-card>
 
-      <el-card class="params-card">
+      <el-card class="params-card glass-card">
         <ParamPanel :show-room-type="false" :show-background="true" />
       </el-card>
 
@@ -65,7 +66,7 @@ const onGallerySelected = (data: any) => {
 
 <style scoped>
 .single-render-page {
-  max-width: 800px;
+  max-width: 860px;
   margin: 0 auto;
 }
 
@@ -76,10 +77,30 @@ const onGallerySelected = (data: any) => {
   margin-bottom: 20px;
 }
 
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-hover);
+  color: var(--text-primary);
+}
+
 .page-header h2 {
   font-size: 20px;
-  font-weight: 600;
-  color: #303133;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .render-content {
@@ -88,18 +109,14 @@ const onGallerySelected = (data: any) => {
   gap: 20px;
 }
 
-.image-card {
-  width: 100%;
-}
-
 .preview-section {
-  padding: 0 20px 20px;
+  padding: 0 4px 8px;
 }
 
 .preview-title {
   font-size: 14px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
   margin-bottom: 12px;
 }
 
@@ -107,9 +124,9 @@ const onGallerySelected = (data: any) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  border: 1px solid #e4e7ed;
-  background: #fafafa;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: rgba(0, 0, 0, 0.2);
   padding: 8px;
   height: 300px;
 }
@@ -117,16 +134,18 @@ const onGallerySelected = (data: any) => {
 .selected-name {
   margin-top: 8px;
   font-size: 13px;
-  color: #909399;
+  color: var(--text-muted);
   text-align: center;
 }
 
-.params-card {
-  width: 100%;
+.submit-section {
+  padding-bottom: 24px;
 }
 
-.submit-section {
-  width: 100%;
-  padding-bottom: 40px;
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .preview-container {
+    height: 240px;
+  }
 }
 </style>

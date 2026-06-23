@@ -14,21 +14,21 @@
     </div>
 
     <div v-loading="loading" class="gallery-grid">
-      <div v-for="img in images" :key="img.image_id" class="gallery-card">
+      <div v-for="img in images" :key="img.image_id" class="gallery-card glass-card">
         <div class="gallery-image">
           <ImageViewer :src="img.thumbnail_url" :alt="img.name" />
         </div>
         <div class="gallery-info">
           <div class="gallery-name">{{ img.name }}</div>
           <div class="gallery-meta">
-            <span>{{ img.category }}</span>
-            <span v-if="img.width">{{ img.width }}x{{ img.height }}</span>
+            <span class="meta-tag">{{ img.category }}</span>
+            <span v-if="img.width" class="meta-size">{{ img.width }}x{{ img.height }}</span>
           </div>
         </div>
       </div>
     </div>
 
-    <div v-if="!loading && images.length === 0" class="empty-state">
+    <div v-if="!loading && images.length === 0" class="empty-state glass-card">
       <el-icon :size="48"><PictureFilled /></el-icon>
       <p>暂无图片</p>
     </div>
@@ -72,7 +72,7 @@ onMounted(loadGallery)
 
 <style scoped>
 .gallery-page {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
@@ -81,53 +81,52 @@ onMounted(loadGallery)
 }
 
 .page-header h2 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #303133;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .gallery-filter {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  overflow-x: auto;
 }
 
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
 }
 
 .gallery-card {
-  border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #e4e7ed;
-  background: #fff;
-  transition: box-shadow 0.3s;
-}
-
-.gallery-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
 
 .gallery-image {
-  height: 180px;
+  height: 200px;
   overflow: hidden;
-  background: #f5f7fa;
+  background: rgba(0, 0, 0, 0.2);
 }
 
-.gallery-image img {
+.gallery-image :deep(img) {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gallery-card:hover .gallery-image :deep(img) {
+  transform: scale(1.05);
 }
 
 .gallery-info {
-  padding: 10px 12px;
+  padding: 12px 14px;
 }
 
 .gallery-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -135,20 +134,58 @@ onMounted(loadGallery)
 
 .gallery-meta {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  margin-top: 4px;
+  margin-top: 6px;
   font-size: 12px;
-  color: #c0c4cc;
+}
+
+.meta-tag {
+  color: var(--accent-primary-light);
+  background: rgba(99, 102, 241, 0.1);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.meta-size {
+  color: var(--text-faint);
+  font-family: 'Inter', monospace;
 }
 
 .empty-state {
   text-align: center;
   padding: 60px;
-  color: #c0c4cc;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
 .empty-state p {
-  margin-top: 12px;
   font-size: 14px;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+  }
+
+  .gallery-image {
+    height: 150px;
+  }
+}
+
+@media (max-width: 375px) {
+  .gallery-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .gallery-image {
+    height: 130px;
+  }
 }
 </style>

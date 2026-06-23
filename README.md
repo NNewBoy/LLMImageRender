@@ -43,6 +43,8 @@ LLMImageRender/
 │   │   ├── stores/              # Pinia状态管理
 │   │   ├── api/                 # API请求封装
 │   │   ├── router/              # 路由配置
+│   │   ├── styles/              # 全局样式
+│   │   │   └── theme.css        # Glassmorphism + Dark Mode 主题
 │   │   └── types/               # TypeScript类型
 │   ├── package.json
 │   └── vite.config.ts
@@ -81,6 +83,33 @@ LLMImageRender/
 ├── SPEC.md                      # 软件规格说明书
 └── README.md                    # 本文件
 ```
+
+## UI 设计
+
+前端采用 **Glassmorphism + Dark Mode** 风格，支持 PC / 平板 / 移动端响应式自适应。
+
+### 设计要点
+
+- **暗色主题**：`#0a0a0f` 深色背景 + 动画渐变光球，营造沉浸感
+- **玻璃拟态**：`backdrop-filter: blur(20px)` + 半透明边框，卡片浮于背景之上
+- **强调色**：靛蓝 `#6366f1` 为主色，紫色 `#8b5cf6` 为辅助
+- **字体**：Inter（Google Fonts），配合中文系统字体回退
+- **Element Plus 暗色模式**：全组件 CSS 变量覆盖，统一玻璃风格
+
+### 响应式断点
+
+| 断点 | 适配内容 |
+|------|----------|
+| PC（1024px+） | 完整布局、双列表单、双列对比图 |
+| 平板（768px） | 缩小间距/字体、对比图堆叠、网格调整 |
+| 移动端（375-480px） | 汉堡菜单、单列表单、双列网格、三列房间选择器 |
+
+### 无障碍
+
+- `prefers-reduced-motion` 支持，禁用动画
+- 所有可交互元素 `cursor-pointer`
+- 过渡动画 200-250ms
+- 路由链接正确的悬停/激活视觉反馈
 
 ## 快速开始
 

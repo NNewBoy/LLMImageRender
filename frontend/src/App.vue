@@ -1,8 +1,19 @@
 <template>
   <div id="app-layout">
+    <!-- Animated gradient background -->
+    <div class="bg-gradient" aria-hidden="true">
+      <div class="bg-orb bg-orb--1"></div>
+      <div class="bg-orb bg-orb--2"></div>
+      <div class="bg-orb bg-orb--3"></div>
+    </div>
+
     <AppHeader />
     <main class="main-content">
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <transition name="page" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </main>
   </div>
 </template>
@@ -12,29 +23,126 @@ import AppHeader from './components/AppHeader.vue'
 </script>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
-  background-color: #f5f7fa;
-  color: #303133;
-}
-
 #app-layout {
+  position: relative;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
+/* Animated background orbs */
+.bg-gradient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.4;
+  animation: float 20s ease-in-out infinite;
+}
+
+.bg-orb--1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #6366f1, transparent 70%);
+  top: -150px;
+  left: -100px;
+}
+
+.bg-orb--2 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #8b5cf6, transparent 70%);
+  bottom: -100px;
+  right: -80px;
+  animation-delay: -7s;
+}
+
+.bg-orb--3 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, #3b82f6, transparent 70%);
+  top: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: -14s;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -40px) scale(1.05);
+  }
+  66% {
+    transform: translate(-20px, 30px) scale(0.95);
+  }
+}
+
 .main-content {
+  position: relative;
+  z-index: 1;
   flex: 1;
-  max-width: 1400px;
+  max-width: 1280px;
   width: 100%;
   margin: 0 auto;
-  padding: 20px;
+  padding: 24px 24px 48px;
+}
+
+/* Page transition */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-12px);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 16px 16px 32px;
+  }
+
+  .bg-orb {
+    filter: blur(80px);
+    opacity: 0.3;
+  }
+
+  .bg-orb--1 {
+    width: 300px;
+    height: 300px;
+  }
+
+  .bg-orb--2 {
+    width: 250px;
+    height: 250px;
+  }
+
+  .bg-orb--3 {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-orb {
+    animation: none;
+  }
 }
 </style>

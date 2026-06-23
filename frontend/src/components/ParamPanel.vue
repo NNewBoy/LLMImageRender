@@ -3,78 +3,85 @@
     <h3 class="panel-title">渲染参数配置</h3>
 
     <el-form label-width="80px" label-position="top" size="default">
-      <el-form-item label="渲染风格">
-        <el-select v-model="localParams.style" class="full-width">
-          <el-option v-for="s in presets.styles" :key="s.value" :label="s.label" :value="s.value" />
-        </el-select>
-      </el-form-item>
+      <div class="form-grid">
+        <el-form-item label="渲染风格">
+          <el-select v-model="localParams.style" class="full-width">
+            <el-option v-for="s in presets.styles" :key="s.value" :label="s.label" :value="s.value" />
+          </el-select>
+        </el-form-item>
 
-      <el-form-item label="光照条件">
-        <el-select v-model="localParams.lighting" class="full-width">
-          <el-option v-for="l in presets.lighting" :key="l.value" :label="l.label" :value="l.value" />
-        </el-select>
-      </el-form-item>
+        <el-form-item label="光照条件">
+          <el-select v-model="localParams.lighting" class="full-width">
+            <el-option v-for="l in presets.lighting" :key="l.value" :label="l.label" :value="l.value" />
+          </el-select>
+        </el-form-item>
 
-      <el-form-item label="视角">
-        <el-select v-model="localParams.view_angle" class="full-width">
-          <el-option v-for="v in presets.view_angles" :key="v.value" :label="v.label" :value="v.value" />
-        </el-select>
-      </el-form-item>
+        <el-form-item label="视角">
+          <el-select v-model="localParams.view_angle" class="full-width">
+            <el-option v-for="v in presets.view_angles" :key="v.value" :label="v.label" :value="v.value" />
+          </el-select>
+        </el-form-item>
 
-      <el-form-item v-if="showRoomType" label="户型">
-        <el-select v-model="localParams.room_type" class="full-width">
-          <el-option v-for="r in presets.room_types" :key="r.value" :label="r.label" :value="r.value" />
-        </el-select>
-      </el-form-item>
+        <el-form-item v-if="showRoomType" label="户型">
+          <el-select v-model="localParams.room_type" class="full-width">
+            <el-option v-for="r in presets.room_types" :key="r.value" :label="r.label" :value="r.value" />
+          </el-select>
+        </el-form-item>
 
-      <el-form-item label="材质">
-        <el-select v-model="localParams.material" class="full-width">
-          <el-option v-for="m in presets.materials" :key="m.value" :label="m.label" :value="m.value" />
-        </el-select>
-      </el-form-item>
+        <el-form-item label="材质">
+          <el-select v-model="localParams.material" class="full-width">
+            <el-option v-for="m in presets.materials" :key="m.value" :label="m.label" :value="m.value" />
+          </el-select>
+        </el-form-item>
 
-      <el-form-item label="颜色">
-        <el-color-picker v-model="localParams.color" />
-        <span class="color-value">{{ localParams.color }}</span>
-      </el-form-item>
+        <el-form-item label="颜色">
+          <el-color-picker v-model="localParams.color" />
+          <span class="color-value">{{ localParams.color }}</span>
+        </el-form-item>
 
-      <el-form-item v-if="showBackground" label="背景颜色">
-        <div class="background-picker">
-          <el-color-picker v-model="localParams.background_color" />
-          <span class="color-value">{{ localParams.background_color }}</span>
-          <div class="preset-colors">
-            <span class="preset-label">快速选择：</span>
-            <el-button
-              v-for="c in presetBackgroundColors"
-              :key="c.value"
-              :style="{ background: c.value }"
-              class="preset-color-btn"
-              :class="{ active: localParams.background_color === c.value }"
-              @click="localParams.background_color = c.value"
-              :title="c.label"
-            />
+        <el-form-item v-if="showBackground" label="背景颜色" class="full-span">
+          <div class="background-picker">
+            <div class="bg-current">
+              <el-color-picker v-model="localParams.background_color" />
+              <span class="color-value">{{ localParams.background_color }}</span>
+            </div>
+            <div class="preset-colors">
+              <button
+                v-for="c in presetBackgroundColors"
+                :key="c.value"
+                type="button"
+                :style="{ background: c.value }"
+                class="preset-color-btn"
+                :class="{ active: localParams.background_color === c.value }"
+                @click="localParams.background_color = c.value"
+                :title="c.label"
+                :aria-label="c.label"
+              >
+                <span class="preset-color-name">{{ c.label }}</span>
+              </button>
+            </div>
           </div>
-        </div>
-      </el-form-item>
+        </el-form-item>
 
-      <el-form-item label="柜子尺寸 (mm)">
-        <div class="size-inputs">
-          <el-input-number v-model="localParams.cabinet_size!.width" :min="200" :max="5000" placeholder="宽" />
-          <span class="size-sep">x</span>
-          <el-input-number v-model="localParams.cabinet_size!.height" :min="200" :max="5000" placeholder="高" />
-          <span class="size-sep">x</span>
-          <el-input-number v-model="localParams.cabinet_size!.depth" :min="100" :max="2000" placeholder="深" />
-        </div>
-      </el-form-item>
+        <el-form-item label="柜子尺寸(宽×高×深 mm)" class="full-span">
+          <div class="size-inputs">
+            <el-input-number v-model="localParams.cabinet_size!.width" :min="200" :max="5000" />
+            <span class="size-sep">×</span>
+            <el-input-number v-model="localParams.cabinet_size!.height" :min="200" :max="5000" />
+            <span class="size-sep">×</span>
+            <el-input-number v-model="localParams.cabinet_size!.depth" :min="100" :max="2000" />
+          </div>
+        </el-form-item>
 
-      <el-form-item label="额外描述">
-        <el-input
-          v-model="localParams.description"
-          type="textarea"
-          :rows="3"
-          placeholder="描述你想要的渲染效果..."
-        />
-      </el-form-item>
+        <el-form-item label="额外描述" class="full-span">
+          <el-input
+            v-model="localParams.description"
+            type="textarea"
+            :rows="3"
+            placeholder="描述你想要的渲染效果..."
+          />
+        </el-form-item>
+      </div>
     </el-form>
   </div>
 </template>
@@ -138,35 +145,39 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.param-panel {
-  padding: 16px;
-  background: #fff;
-  border-radius: 8px;
-  border: 1px solid #e4e7ed;
-}
-
 .panel-title {
   font-size: 16px;
   font-weight: 600;
-  margin-bottom: 16px;
-  color: #303133;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 20px;
 }
 
 .full-width {
   width: 100%;
 }
 
+.full-span {
+  grid-column: 1 / -1;
+}
+
 .color-value {
   margin-left: 12px;
   font-size: 13px;
-  color: #909399;
-  font-family: monospace;
+  color: var(--text-muted);
+  font-family: 'Inter', monospace;
 }
 
 .size-inputs {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .size-inputs .el-input-number {
@@ -174,41 +185,75 @@ onMounted(async () => {
 }
 
 .size-sep {
-  color: #c0c4cc;
+  color: var(--text-faint);
   font-weight: bold;
 }
 
 .background-picker {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
   width: 100%;
+}
+
+.bg-current {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .preset-colors {
   display: flex;
-  align-items: center;
-  gap: 8px;
   flex-wrap: wrap;
-}
-
-.preset-label {
-  font-size: 13px;
-  color: #909399;
+  gap: 8px;
 }
 
 .preset-color-btn {
-  width: 28px;
-  height: 28px;
-  min-height: 28px;
+  position: relative;
+  width: 56px;
+  height: 32px;
   padding: 0;
-  border: 2px solid #dcdfe6;
-  border-radius: 6px;
+  border: 2px solid var(--glass-border);
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.preset-color-btn:hover {
+  border-color: var(--glass-border-hover);
+  transform: scale(1.05);
 }
 
 .preset-color-btn.active {
-  border-color: #409eff;
-  box-shadow: 0 0 4px rgba(64, 158, 255, 0.5);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 10px var(--accent-primary-glow);
+}
+
+.preset-color-name {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  padding: 1px 0;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .size-inputs .el-input-number {
+    width: 100%;
+    flex: 1;
+  }
 }
 </style>

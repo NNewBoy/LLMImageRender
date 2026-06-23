@@ -13,7 +13,7 @@
       v-if="status === 'processing'"
       :percentage="progress"
       :stroke-width="8"
-      :color="'#409eff'"
+      :color="'#6366f1'"
     />
     <div v-if="errorMessage" class="error-message">
       <el-alert :title="errorMessage" type="error" :closable="false" />
@@ -55,7 +55,7 @@ const statusClass = computed(() => {
 <style scoped>
 .task-status {
   text-align: center;
-  padding: 20px;
+  padding: 24px;
 }
 
 .status-indicator {
@@ -66,13 +66,21 @@ const statusClass = computed(() => {
   margin-top: 12px;
   font-size: 16px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
 }
 
-.status-queued { color: #e6a23c; }
-.status-processing { color: #409eff; }
-.status-completed { color: #67c23a; }
-.status-failed { color: #f56c6c; }
+.status-queued {
+  color: var(--accent-warning);
+}
+.status-processing {
+  color: var(--accent-primary-light);
+}
+.status-completed {
+  color: var(--accent-success);
+}
+.status-failed {
+  color: var(--accent-danger);
+}
 
 .error-message {
   margin-top: 16px;

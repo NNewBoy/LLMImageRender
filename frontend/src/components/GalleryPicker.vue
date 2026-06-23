@@ -87,7 +87,7 @@ onMounted(loadGallery)
 .gallery-title {
   font-size: 14px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .gallery-grid {
@@ -96,23 +96,27 @@ onMounted(loadGallery)
   gap: 12px;
   max-height: 300px;
   overflow-y: auto;
+  padding: 4px;
 }
 
 .gallery-item {
   position: relative;
-  border: 2px solid #e4e7ed;
-  border-radius: 8px;
+  border: 2px solid var(--glass-border);
+  border-radius: var(--radius-md);
   overflow: hidden;
   cursor: pointer;
-  transition: border-color 0.3s;
+  transition: all 0.2s ease;
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .gallery-item:hover {
-  border-color: #409eff;
+  border-color: var(--accent-primary-light);
+  background: rgba(99, 102, 241, 0.05);
 }
 
 .gallery-item.selected {
-  border-color: #409eff;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 12px var(--accent-primary-glow);
 }
 
 .gallery-item img {
@@ -124,7 +128,7 @@ onMounted(loadGallery)
 .item-name {
   padding: 6px 8px;
   font-size: 12px;
-  color: #606266;
+  color: var(--text-muted);
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
@@ -135,7 +139,7 @@ onMounted(loadGallery)
   position: absolute;
   top: 6px;
   right: 6px;
-  background: #409eff;
+  background: var(--accent-primary);
   color: #fff;
   border-radius: 50%;
   width: 22px;
@@ -144,13 +148,22 @@ onMounted(loadGallery)
   align-items: center;
   justify-content: center;
   font-size: 12px;
+  box-shadow: 0 0 8px var(--accent-primary-glow);
 }
 
 .empty-hint {
   grid-column: 1 / -1;
   text-align: center;
   padding: 20px;
-  color: #c0c4cc;
+  color: var(--text-faint);
   font-size: 13px;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 480px) {
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+  }
 }
 </style>

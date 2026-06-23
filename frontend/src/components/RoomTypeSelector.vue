@@ -39,41 +39,61 @@ const roomTypes = [
 <style scoped>
 .room-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   gap: 12px;
 }
 
 .room-card {
-  padding: 16px;
+  padding: 20px 12px;
   text-align: center;
-  border: 2px solid #e4e7ed;
-  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .room-card:hover {
-  border-color: #a0cfff;
-  background: #ecf5ff;
+  border-color: var(--accent-primary-light);
+  background: rgba(99, 102, 241, 0.06);
 }
 
 .room-card.selected {
-  border-color: #409eff;
-  background: #ecf5ff;
+  border-color: var(--accent-primary);
+  background: rgba(99, 102, 241, 0.12);
+  box-shadow: 0 0 12px var(--accent-primary-glow);
 }
 
 .room-icon {
-  color: #606266;
+  color: var(--text-muted);
   margin-bottom: 8px;
+  transition: color 0.2s ease;
 }
 
 .room-card.selected .room-icon {
-  color: #409eff;
+  color: var(--accent-primary-light);
 }
 
 .room-name {
   font-size: 13px;
-  color: #606266;
+  color: var(--text-secondary);
   font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.room-card.selected .room-name {
+  color: var(--accent-primary-light);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 480px) {
+  .room-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .room-card {
+    padding: 16px 8px;
+  }
 }
 </style>

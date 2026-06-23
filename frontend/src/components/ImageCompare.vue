@@ -1,14 +1,14 @@
 <template>
   <div class="image-compare">
     <div class="compare-container">
-      <div class="compare-image compare-original">
+      <div class="compare-image">
         <div class="image-label">原始图片</div>
         <div class="image-container">
           <ImageViewer :src="originalUrl" alt="原始图片" />
         </div>
       </div>
-      <div class="compare-image compare-result">
-        <div class="image-label">渲染结果</div>
+      <div class="compare-image">
+        <div class="image-label image-label--result">渲染结果</div>
         <div class="image-container">
           <ImageViewer v-if="resultUrl" :src="resultUrl" alt="渲染结果" />
           <div v-else class="no-result">
@@ -59,34 +59,31 @@ const downloadImage = () => {
 }
 
 .compare-image {
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   overflow: hidden;
-  border: 1px solid #e4e7ed;
-  background: #fafafa;
+  border: 1px solid var(--glass-border);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .image-label {
-  padding: 8px 12px;
+  padding: 10px 14px;
   font-size: 13px;
   font-weight: 600;
-  color: #606266;
-  background: #f5f7fa;
-  border-bottom: 1px solid #e4e7ed;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.image-label--result {
+  color: var(--accent-primary-light);
 }
 
 .image-container {
-  height: 490px;
+  height: 440px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 8px;
-}
-
-.compare-image img {
-  width: 100%;
-  max-height: 490px;
-  object-fit: contain;
-  display: block;
 }
 
 .no-result {
@@ -95,7 +92,7 @@ const downloadImage = () => {
   align-items: center;
   justify-content: center;
   padding: 60px;
-  color: #c0c4cc;
+  color: var(--text-faint);
   gap: 8px;
   font-size: 13px;
 }
@@ -103,5 +100,17 @@ const downloadImage = () => {
 .compare-actions {
   margin-top: 16px;
   text-align: center;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .compare-container {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .image-container {
+    height: 280px;
+  }
 }
 </style>
