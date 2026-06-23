@@ -42,6 +42,7 @@ async def submit_render(req: RenderSubmitRequest, db: Session = Depends(get_db))
         mode=req.mode,
         status="queued",
         image_source=req.image_source.get("type", "gallery"),
+        image_id=image_id,
         original_image=gallery_img.file_path,
         params_json=json.dumps(req.params, ensure_ascii=False),
     )
@@ -83,6 +84,8 @@ def get_task_status(task_id: str, db: Session = Depends(get_db)):
             "status": task.status,
             "progress": task.progress,
             "mode": task.mode,
+            "image_source": task.image_source,
+            "image_id": task.image_id,
             "original_image_url": task.original_image,
             "result_image_url": task.result_image,
             "params": json.loads(task.params_json) if task.params_json else {},

@@ -1,9 +1,10 @@
 import type { RenderParams } from '@/types'
-import { uploadImage } from '@/api/gallery'
+import { uploadImage, getGalleryDetail } from '@/api/gallery'
 
 /**
  * 从 URL 查询参数中解析渲染参数
  * 支持的参数：
+ *   - image_id: 图库中的图片 ID（直接查询图库获取）
  *   - image_url: 图片 URL（网络地址）
  *   - image_base64: 图片 base64（data:image/xxx;base64,...）
  *   - style: 渲染风格
@@ -17,6 +18,7 @@ import { uploadImage } from '@/api/gallery'
  *   - width / height / depth: 柜子尺寸 (mm)
  *
  * 示例：
+ *   /render/single?image_id=abc123&style=nordic&lighting=warm
  *   /render/single?image_url=https://example.com/img.png&style=nordic&lighting=warm
  *   /render/scene?image_base64=data:image/png;base64,...&room_type=bedroom
  */
@@ -27,6 +29,8 @@ export interface UrlParamsResult {
   imageUrl: string | null
   /** 图片 base64 */
   imageBase64: string | null
+  /** 图库图片 ID */
+  imageId: string | null
   /** 是否有外部图片参数 */
   hasExternalImage: boolean
 }
@@ -36,6 +40,7 @@ export function parseUrlParams(query: Record<string, any>, hash?: string): UrlPa
     params: {},
     imageUrl: null,
     imageBase64: null,
+    imageId: null,
     hasExternalImage: false,
   }
 
@@ -54,6 +59,10 @@ export function parseUrlParams(query: Record<string, any>, hash?: string): UrlPa
   const q = mergedQuery
 
   // 图片参数
+  if (q.image_id && typeof q.image_id === 'string') {
+    result.imageId = q.image_id
+    result.hasExternalImage = true
+  }
   if (q.image_url && typeof q.image_url === 'string') {
     result.imageUrl = q.image_url
     result.hasExternalImage = true
@@ -103,15 +112,29 @@ export function parseUrlParams(query: Record<string, any>, hash?: string): UrlPa
 }
 
 /**
- * 处理外部图片（URL 或 base64），下载并上传到后端，设置到 render store
+ * 处理外部图片（图库 ID、URL 或 base64），设置到 render store
+ * 优先级：image_id > image_url > image_base64
  * @returns 上传成功返回 true，失败返回 false
  */
 export async function applyExternalImage(
   store: any,
   imageUrl: string | null,
   imageBase64: string | null,
+  imageId: string | null = null,
 ): Promise<boolean> {
   try {
+    // 优先通过 image_id 查询图库
+    if (imageId) {
+      const res: any = await getGalleryDetail(imageId)
+      if (res.code === 200 && res.data) {
+        store.setGalleryImage(res.data.image_id, res.data.url, res.data.name)
+        return true
+      }
+      // 查不到图库图片
+      console.error('图库中未找到该图片', imageId)
+      return false
+    }
+
     let file: File | null = null
 
     if (imageUrl) {

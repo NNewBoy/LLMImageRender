@@ -19,6 +19,8 @@ export interface RenderTask {
   mode: string
   status: string
   progress: number
+  image_source: string
+  image_id: string | null
   original_image_url: string
   result_image_url: string | null
   params: RenderParams

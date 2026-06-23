@@ -495,3 +495,74 @@ html.dark .el-message {
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
 }
+
+/* Dialog / MessageBox overlay & content */
+html.dark .el-overlay-dialog,
+html.dark .el-overlay-message-box {
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+html.dark .el-dialog {
+  background: rgba(18, 18, 26, 0.96);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-glass-lg);
+}
+
+html.dark .el-dialog__header {
+  border-bottom: 1px solid var(--glass-border);
+  padding: 18px 24px;
+}
+
+html.dark .el-dialog__title {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+html.dark .el-dialog__body {
+  color: var(--text-secondary);
+  padding: 24px;
+}
+
+html.dark .el-dialog__footer {
+  border-top: 1px solid var(--glass-border);
+  padding: 16px 24px;
+}
+
+/* MessageBox */
+html.dark .el-message-box {
+  background: rgba(18, 18, 26, 0.96);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-glass-lg);
+}
+
+html.dark .el-message-box__header {
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 14px;
+}
+
+html.dark .el-message-box__title {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+html.dark .el-message-box__content {
+  color: var(--text-secondary);
+}
+
+html.dark .el-message-box__btns .el-button--primary {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+html.dark .el-message-box__btns .el-button--danger {
+  background: var(--accent-danger);
+  border-color: var(--accent-danger);
+}

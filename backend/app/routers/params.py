@@ -43,6 +43,7 @@ PRESET_PARAMS = {
         {"value": "bookcase", "label": "书柜"},
         {"value": "entryway", "label": "玄关柜"},
         {"value": "tv_stand", "label": "电视柜"},
+        {"value": "other", "label": "其他"},
     ],
 }
 

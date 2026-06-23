@@ -17,6 +17,7 @@ class RenderTask(Base):
     status = Column(String(16), nullable=False, default="queued")
     progress = Column(Integer, default=0)
     image_source = Column(String(16), nullable=False)
+    image_id = Column(String(64), nullable=True)
     original_image = Column(String(512), nullable=False)
     result_image = Column(String(512), nullable=True)
     params_json = Column(Text, nullable=False)

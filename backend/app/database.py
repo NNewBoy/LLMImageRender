@@ -40,5 +40,15 @@ def init_db():
             logger.info("[数据库迁移] 已添加 gallery_images.file_hash 列")
     except Exception:
         pass
+
+    try:
+        result = conn.execute(text("PRAGMA table_info(render_tasks)"))
+        columns = [row[1] for row in result.fetchall()]
+        if 'image_id' not in columns:
+            conn.execute(text("ALTER TABLE render_tasks ADD COLUMN image_id VARCHAR(64)"))
+            conn.commit()
+            logger.info("[数据库迁移] 已添加 render_tasks.image_id 列")
+    except Exception:
+        pass
     finally:
         conn.close()

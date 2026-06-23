@@ -75,9 +75,11 @@ onMounted(async () => {
 
   // 应用外部图片
   if (urlResult.hasExternalImage) {
-    const ok = await applyExternalImage(renderStore, urlResult.imageUrl, urlResult.imageBase64)
+    const ok = await applyExternalImage(renderStore, urlResult.imageUrl, urlResult.imageBase64, urlResult.imageId)
     if (ok) {
       ElMessage.success('外部图片已加载')
+    } else if (urlResult.imageId) {
+      ElMessage.error(`图库中未找到该图片（image_id: ${urlResult.imageId}）`)
     } else {
       ElMessage.error('外部图片加载失败')
     }

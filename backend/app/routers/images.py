@@ -3,6 +3,7 @@ import hashlib
 import logging
 import shutil
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -74,7 +75,7 @@ async def upload_image(file: UploadFile = File(...), db: Session = Depends(get_d
 
     gallery_image = GalleryImage(
         name=file.filename,
-        category="uploaded",
+        category="other",
         file_path=f"/static/uploads/{rel_path}",
         thumbnail_path=f"/static/uploads/{subdir.replace(chr(92), '/')}/thumbnails/{filename}",
         file_hash=file_hash,
@@ -154,3 +155,71 @@ def get_gallery_detail(image_id: str, db: Session = Depends(get_db)):
             "height": img.height,
         },
     }
+
+
+class UpdateImageRequest(BaseModel):
+    name: str | None = None
+    category: str | None = None
+
+
+@router.put("/gallery/{image_id}")
+def update_image(image_id: str, req: UpdateImageRequest, db: Session = Depends(get_db)):
+    logger.info(f"[更新图片信息] image_id={image_id}, name={req.name}, category={req.category}")
+
+    img = db.query(GalleryImage).filter(GalleryImage.image_id == image_id).first()
+    if not img:
+        logger.warning(f"[更新图片信息] 图片不存在: {image_id}")
+        raise HTTPException(status_code=404, detail="图片不存在")
+
+    if req.name is not None:
+        img.name = req.name
+    if req.category is not None:
+        img.category = req.category
+
+    db.commit()
+    db.refresh(img)
+
+    logger.info(f"[更新图片信息] 更新成功: image_id={image_id}")
+
+    return {
+        "code": 200,
+        "message": "更新成功",
+        "data": {
+            "image_id": img.image_id,
+            "name": img.name,
+            "category": img.category,
+            "url": img.file_path,
+            "thumbnail_url": img.thumbnail_path or img.file_path,
+            "width": img.width,
+            "height": img.height,
+        },
+    }
+
+
+@router.delete("/gallery/{image_id}")
+def delete_image(image_id: str, db: Session = Depends(get_db)):
+    logger.info(f"[删除图片] image_id={image_id}")
+
+    img = db.query(GalleryImage).filter(GalleryImage.image_id == image_id).first()
+    if not img:
+        logger.warning(f"[删除图片] 图片不存在: {image_id}")
+        raise HTTPException(status_code=404, detail="图片不存在")
+
+    # 删除物理文件
+    if img.file_path:
+        file_abs = os.path.join(settings.UPLOAD_DIR, img.file_path.replace("/static/uploads/", ""))
+        if os.path.exists(file_abs):
+            os.remove(file_abs)
+            logger.info(f"[删除图片] 已删除文件: {file_abs}")
+    if img.thumbnail_path:
+        thumb_abs = os.path.join(settings.UPLOAD_DIR, img.thumbnail_path.replace("/static/uploads/", ""))
+        if os.path.exists(thumb_abs):
+            os.remove(thumb_abs)
+            logger.info(f"[删除图片] 已删除缩略图: {thumb_abs}")
+
+    db.delete(img)
+    db.commit()
+
+    logger.info(f"[删除图片] 删除成功: image_id={image_id}")
+
+    return {"code": 200, "message": "删除成功"}

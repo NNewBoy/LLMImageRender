@@ -14,7 +14,7 @@
         <div class="upload-hint">支持 JPG / PNG / WebP，最大 10MB</div>
       </div>
       <div v-else class="upload-preview">
-        <img :src="previewUrl" alt="预览" />
+        <el-image :src="previewUrl" alt="预览" fit="contain" />
         <div class="preview-mask">
           <span>点击更换图片</span>
         </div>
@@ -95,15 +95,14 @@ const handleFileChange = async (file: any) => {
 
 .upload-preview {
   position: relative;
-  max-height: 300px;
+  height: 300px;
   overflow: hidden;
   border-radius: var(--radius-md);
 }
 
-.upload-preview img {
+.upload-preview .el-image {
   width: 100%;
   height: 100%;
-  object-fit: contain;
 }
 
 .preview-mask {

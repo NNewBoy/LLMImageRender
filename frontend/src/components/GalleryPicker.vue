@@ -2,7 +2,7 @@
   <div class="gallery-picker">
     <div class="gallery-header">
       <span class="gallery-title">从图库选择</span>
-      <el-select v-model="category" placeholder="全部分类" clearable size="small" @change="loadGallery">
+      <el-select v-model="category" placeholder="全部分类" clearable @change="loadGallery">
         <el-option v-for="c in categories" :key="c.value" :label="c.label" :value="c.value" />
       </el-select>
     </div>
@@ -47,6 +47,7 @@ const categories: PresetOption[] = [
   { value: 'bookcase', label: '书柜' },
   { value: 'entryway', label: '玄关柜' },
   { value: 'tv_stand', label: '电视柜' },
+  { value: 'other', label: '其他' },
 ]
 
 const loadGallery = async () => {
@@ -85,6 +86,8 @@ onMounted(loadGallery)
 }
 
 .gallery-title {
+  width: 100px;
+  margin-right: 12px;
   font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);

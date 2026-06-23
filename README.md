@@ -6,8 +6,9 @@
 
 - **单品渲染**：上传柜子图片，AI 智能生成真实感3D渲染效果图，支持自定义纯色背景
 - **场景渲染**：将柜子布置在客厅、卧室、厨房、书房、玄关等典型户型中进行渲染
-- **图库管理**：预设柜子图库，支持分类浏览和选择
-- **渲染历史**：查看和管理所有渲染任务记录
+- **图库管理**：预设柜子图库，支持分类浏览、图片编辑（改名/改分类）、删除
+- **渲染历史**：查看和管理所有渲染任务记录，支持删除记录和再次渲染
+- **外部平台对接**：通过 URL 参数传入图片和渲染参数，支持 `image_id`（图库查询）、`image_url`、`image_base64` 三种图片来源
 
 ## 技术栈
 
@@ -186,6 +187,7 @@ http://localhost:5173/render/scene?<params>
 
 | 参数 | 说明 | 示例 |
 |------|------|------|
+| `image_id` | 图库图片 ID（直接查询图库） | `image_id=abc123def456` |
 | `image_url` | 图片 URL 地址 | `image_url=https://example.com/cabinet.png` |
 | `image_base64` | 图片 Base64（data URI） | `image_base64=data:image/png;base64,iVBOR...` |
 | `style` | 渲染风格 | `style=nordic` |
@@ -200,14 +202,17 @@ http://localhost:5173/render/scene?<params>
 | `height` | 柜子高度 (mm) | `height=2200` |
 | `depth` | 柜子深度 (mm) | `depth=600` |
 
-> 有传参则使用传入值，无传参则使用默认值。`image_url` 和 `image_base64` 二选一。颜色值中的 `#` 无需 URL 编码，代码自动处理。
+> 有传参则使用传入值，无传参则使用默认值。`image_id`、`image_url` 和 `image_base64` 三选一，优先级：`image_id` > `image_url` > `image_base64`。颜色值中的 `#` 无需 URL 编码，代码自动处理。
 
 ### 示例
 
 ```bash
+# 单品渲染：通过图库 image_id 传图（查不到则提示）
+http://localhost:5173/render/single?image_id=abc123def456&style=nordic&lighting=warm&material=oak_wood
+
 # 单品渲染：通过 URL 传图 + 自定义风格
 http://localhost:5173/render/single?image_url=https://example.com/cabinet.png&style=nordic&lighting=warm&material=oak_wood
-http://localhost:5173/render/single?image_url=https://d00.paixin.com/thumbs/1765561/28728719/staff_1024.jpg&style=japanese&lighting=warm&view_angle=front_45&material=oak_wood&color=%238B7355&bg_color=%23FFFFFF&description=modern&width=800&height=2000&depth=400
+http://localhost:5173/render/single?image_id=img_e913bf656d45&style=japanese&lighting=warm&view_angle=front_45&material=oak_wood&color=%238B7355&bg_color=%23FFFFFF&description=modern&width=800&height=2000&depth=400
 
 # 场景渲染：通过 base64 传图 + 户型和尺寸
 http://localhost:5173/render/scene?image_base64=data:image/png;base64,...&room_type=bedroom&width=800&height=2000&depth=500
@@ -219,9 +224,13 @@ http://localhost:5173/render/scene?image_url=https://d00.paixin.com/thumbs/17655
 | 方法 | 端点 | 说明 |
 |------|------|------|
 | POST | `/api/images/upload` | 上传图片（MD5 去重，相同图片不重复保存） |
-| GET | `/api/images/gallery` | 获取图库 |
+| GET | `/api/images/gallery` | 获取图库（支持分类筛选） |
+| GET | `/api/images/gallery/:id` | 获取图片详情 |
+| PUT | `/api/images/gallery/:id` | 更新图片信息（名称/分类） |
+| DELETE | `/api/images/gallery/:id` | 删除图片（含物理文件） |
 | POST | `/api/render/submit` | 提交渲染任务 |
 | GET | `/api/render/task/:id` | 查询任务状态 |
+| DELETE | `/api/render/task/:id` | 删除渲染任务 |
 | GET | `/api/render/history` | 渲染历史 |
 | GET | `/api/params/presets` | 获取预设参数 |
 
