@@ -22,7 +22,7 @@ def save_result_image(file_content: bytes, task_id: str) -> str:
     file_path = os.path.join(save_dir, filename)
     with open(file_path, "wb") as f:
         f.write(file_content)
-    return f"/static/results/{subdir.replace(chr(92), '/')}/{filename}"
+    return f"/render_static/results/{subdir.replace(chr(92), '/')}/{filename}"
 
 
 def delete_file(file_path: str):

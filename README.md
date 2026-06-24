@@ -147,12 +147,12 @@ cp .env.example .env
 python seed.py
 
 # 启动服务
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8002
 ```
 
 后端服务启动后：
-- API 文档：http://localhost:8000/docs
-- 健康检查：http://localhost:8000/api/health
+- API 文档：http://localhost:8002/docs
+- 健康检查：http://localhost:8002/api/health
 
 ### 2. 前端启动
 
@@ -166,11 +166,11 @@ npm install
 npm run dev
 ```
 
-前端开发服务器启动后：http://localhost:5173
+前端开发服务器启动后：http://localhost:5175/llmimagerender/
 
 ### 3. 访问应用
 
-打开浏览器访问 http://localhost:5173
+打开浏览器访问 http://localhost:5175/llmimagerender/
 
 ## 外部平台对接（URL 参数）
 
@@ -179,8 +179,8 @@ npm run dev
 ### 基本用法
 
 ```
-http://localhost:5173/render/single?<params>
-http://localhost:5173/render/scene?<params>
+http://localhost:5175/llmimagerender/render/single?<params>
+http://localhost:5175/llmimagerender/render/scene?<params>
 ```
 
 ### 支持的参数
@@ -208,15 +208,15 @@ http://localhost:5173/render/scene?<params>
 
 ```bash
 # 单品渲染：通过图库 image_id 传图（查不到则提示）
-http://localhost:5173/render/single?image_id=abc123def456&style=nordic&lighting=warm&material=oak_wood
+http://localhost:5175/llmimagerender/render/single?image_id=abc123def456&style=nordic&lighting=warm&material=oak_wood
 
 # 单品渲染：通过 URL 传图 + 自定义风格
-http://localhost:5173/render/single?image_url=https://example.com/cabinet.png&style=nordic&lighting=warm&material=oak_wood
-http://localhost:5173/render/single?image_id=img_e913bf656d45&style=japanese&lighting=warm&view_angle=front_45&material=oak_wood&color=%238B7355&bg_color=%23FFFFFF&description=modern&width=800&height=2000&depth=400
+http://localhost:5175/llmimagerender/render/single?image_url=https://example.com/cabinet.png&style=nordic&lighting=warm&material=oak_wood
+http://localhost:5175/llmimagerender/render/single?image_id=img_e913bf656d45&style=japanese&lighting=warm&view_angle=front_45&material=oak_wood&color=%238B7355&bg_color=%23FFFFFF&description=modern&width=800&height=2000&depth=400
 
 # 场景渲染：通过 base64 传图 + 户型和尺寸
-http://localhost:5173/render/scene?image_base64=data:image/png;base64,...&room_type=bedroom&width=800&height=2000&depth=500
-http://localhost:5173/render/scene?image_url=https://d00.paixin.com/thumbs/1765561/28728719/staff_1024.jpg&style=industrial&lighting=cool&view_angle=top&room_type=study&material=metal&color=%238B7354&description=bright-colored&width=810&height=2010&depth=410
+http://localhost:5175/llmimagerender/render/scene?image_base64=data:image/png;base64,...&room_type=bedroom&width=800&height=2000&depth=500
+http://localhost:5175/llmimagerender/render/scene?image_url=https://d00.paixin.com/thumbs/1765561/28728719/staff_1024.jpg&style=industrial&lighting=cool&view_angle=top&room_type=study&material=metal&color=%238B7354&description=bright-colored&width=810&height=2010&depth=410
 ```
 
 ## API 端点
@@ -256,7 +256,7 @@ START → parse_input → build_prompt → check_interrupt
 |------|------|--------|
 | `DASHSCOPE_API_KEY` | 阿里云 DashScope API Key | - |
 | `DATABASE_URL` | SQLite 数据库路径 | `sqlite:///./llm_image_render.db` |
-| `CORS_ORIGINS` | 允许的前端域名 | `http://localhost:5173` |
+| `CORS_ORIGINS` | 允许的前端域名 | `http://localhost:5175` |
 | `MAX_UPLOAD_SIZE_MB` | 上传文件大小限制 | `10` |
 
 ## 日志系统

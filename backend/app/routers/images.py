@@ -76,8 +76,8 @@ async def upload_image(file: UploadFile = File(...), db: Session = Depends(get_d
     gallery_image = GalleryImage(
         name=file.filename,
         category="other",
-        file_path=f"/static/uploads/{rel_path}",
-        thumbnail_path=f"/static/uploads/{subdir.replace(chr(92), '/')}/thumbnails/{filename}",
+        file_path=f"/render_static/uploads/{rel_path}",
+        thumbnail_path=f"/render_static/uploads/{subdir.replace(chr(92), '/')}/thumbnails/{filename}",
         file_hash=file_hash,
         width=width,
         height=height,
@@ -207,12 +207,12 @@ def delete_image(image_id: str, db: Session = Depends(get_db)):
 
     # 删除物理文件
     if img.file_path:
-        file_abs = os.path.join(settings.UPLOAD_DIR, img.file_path.replace("/static/uploads/", ""))
+        file_abs = os.path.join(settings.UPLOAD_DIR, img.file_path.replace("/render_static/uploads/", ""))
         if os.path.exists(file_abs):
             os.remove(file_abs)
             logger.info(f"[删除图片] 已删除文件: {file_abs}")
     if img.thumbnail_path:
-        thumb_abs = os.path.join(settings.UPLOAD_DIR, img.thumbnail_path.replace("/static/uploads/", ""))
+        thumb_abs = os.path.join(settings.UPLOAD_DIR, img.thumbnail_path.replace("/render_static/uploads/", ""))
         if os.path.exists(thumb_abs):
             os.remove(thumb_abs)
             logger.info(f"[删除图片] 已删除缩略图: {thumb_abs}")

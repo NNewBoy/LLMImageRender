@@ -34,11 +34,11 @@ os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
 os.makedirs(settings.GALLERY_DIR, exist_ok=True)
 os.makedirs(settings.RESULT_DIR, exist_ok=True)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/render_static", StaticFiles(directory="render_static"), name="render_static")
 
-app.include_router(images.router, prefix="/api/images", tags=["images"])
-app.include_router(render.router, prefix="/api/render", tags=["render"])
-app.include_router(params.router, prefix="/api/params", tags=["params"])
+app.include_router(images.router, prefix="/render_api/images", tags=["images"])
+app.include_router(render.router, prefix="/render_api/render", tags=["render"])
+app.include_router(params.router, prefix="/render_api/params", tags=["params"])
 
 logger.info("=" * 50)
 logger.info("[应用启动] LLMImageRender API 初始化中...")
@@ -58,7 +58,7 @@ def on_startup():
     logger.info("=" * 50)
 
 
-@app.get("/api/health")
+@app.get("/render_api/health")
 def health_check():
     logger.debug("[健康检查] 收到健康检查请求")
     return {"status": "ok", "service": "LLMImageRender"}

@@ -27,7 +27,7 @@
 | **Phase 17** | RenderDetailPage 移动端响应式布局 | - | ✅ 已完成 |
 
 **验证结果**：
-- 后端服务启动成功（`http://localhost:8000`）
+- 后端服务启动成功（`http://localhost:8002`）
 - API 接口 `/api/images/gallery` 返回 200，数据正常
 - 前端 TypeScript 类型检查通过（`vue-tsc --noEmit` 无报错）
 - 前端生产构建成功（`npm run build` 生成 dist 目录）
@@ -43,7 +43,7 @@
 | 文件 | 说明 | 状态 |
 |------|------|------|
 | [frontend/package.json](file:///e:/AICodeProgram/LLMImageRender/frontend/package.json) | 依赖与脚本（Vue3 + Vite + TS + Element Plus + Pinia） | ✅ |
-| [frontend/vite.config.ts](file:///e:/AICodeProgram/LLMImageRender/frontend/vite.config.ts) | Vite 配置（代理 /api → localhost:8000） | ✅ |
+| [frontend/vite.config.ts](file:///e:/AICodeProgram/LLMImageRender/frontend/vite.config.ts) | Vite 配置（代理 /api → localhost:8002，base /llmimagerender/） | ✅ |
 | [frontend/tsconfig.json](file:///e:/AICodeProgram/LLMImageRender/frontend/tsconfig.json) | TypeScript 配置 | ✅ |
 | [frontend/tsconfig.node.json](file:///e:/AICodeProgram/LLMImageRender/frontend/tsconfig.node.json) | Node 环境 TS 配置 | ✅ |
 | [frontend/index.html](file:///e:/AICodeProgram/LLMImageRender/frontend/index.html) | HTML 入口 | ✅ |
@@ -241,13 +241,13 @@ START → parse_input → build_prompt → check_interrupt
 
 | 测试项 | 结果 | 状态 |
 |--------|------|------|
-| 后端服务启动 | `uvicorn` 正常运行在 :8000 | ✅ |
+| 后端服务启动 | `uvicorn` 正常运行在 :8002 | ✅ |
 | API `/api/images/gallery` | 返回 200，3条图库数据 | ✅ |
 | API `/api/health` | 返回 `{"status":"ok"}` | ✅ |
 | 前端 TS 类型检查 | `vue-tsc --noEmit` 无报错 | ✅ |
 | 前端生产构建 | `npm run build` 成功，生成 dist | ✅ |
 | 种子数据初始化 | `python seed.py` 成功导入3条 | ✅ |
-| Vite 开发代理 | `/api` 代理到 localhost:8000 | ✅ |
+| Vite 开发代理 | `/api` 代理到 localhost:8002 | ✅ |
 
 ---
 

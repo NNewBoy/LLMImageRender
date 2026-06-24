@@ -3,13 +3,15 @@ import base64
 import logging
 from typing import Optional
 
+from app.config import settings
+
 logger = logging.getLogger(__name__)
 
 
 class LLMClient:
     def __init__(self):
-        self.api_key = os.getenv("DASHSCOPE_API_KEY", "")
-        self.model_name = "qwen-image-2.0-pro"
+        self.api_key = settings.DASHSCOPE_API_KEY
+        self.model_name = settings.DASHSCOPE_MODEL
         logger.info(f"[LLM客户端] 初始化完成, model={self.model_name}, api_key={'已配置' if self.api_key else '未配置'}")
 
     async def generate_image(

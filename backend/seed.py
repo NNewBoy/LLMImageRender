@@ -10,22 +10,34 @@ from app.utils.image_utils import get_image_size
 
 SEED_IMAGES = [
     {
-        "name": "现代简约衣柜",
+        "name": "简约衣柜",
         "category": "wardrobe",
-        "file_path": "/static/gallery/wardrobe/cabinet-main.png",
-        "thumbnail_path": "/static/gallery/wardrobe/cabinet-main.png",
+        "file_path": "/render_static/gallery/wardrobe/wardrobe1.png",
+        "thumbnail_path": "/render_static/gallery/wardrobe/wardrobe1.png",
     },
     {
-        "name": "欧式橱柜",
+        "name": "简约橱柜",
         "category": "kitchen",
-        "file_path": "/static/gallery/kitchen/cabinet-open.png",
-        "thumbnail_path": "/static/gallery/kitchen/cabinet-open.png",
+        "file_path": "/render_static/gallery/kitchen/kitchen1.png",
+        "thumbnail_path": "/render_static/gallery/kitchen/kitchen1.png",
     },
     {
-        "name": "日式书柜",
+        "name": "简约书柜",
         "category": "bookcase",
-        "file_path": "/static/gallery/bookcase/cabinet-side.png",
-        "thumbnail_path": "/static/gallery/bookcase/cabinet-side.png",
+        "file_path": "/render_static/gallery/bookcase/bookcase1.png",
+        "thumbnail_path": "/render_static/gallery/bookcase/bookcase1.png",
+    },
+    {
+        "name": "简约玄关柜",
+        "category":"entryway",
+        "file_path": "/render_static/gallery/entryway/entryway1.png",
+        "thumbnail_path": "/render_static/gallery/entryway/entryway1.png",
+    },
+    {
+        "name": "简约电视柜",
+        "category": "tv_stand",
+        "file_path": "/render_static/gallery/tv_stand/tv_stand1.png",
+        "thumbnail_path": "/render_static/gallery/tv_stand/tv_stand1.png",
     },
 ]
 

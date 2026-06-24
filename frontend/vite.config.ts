@@ -4,19 +4,20 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [vue()],
+  base: '/llmimagerender/',
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
     },
   },
   server: {
-    port: 5173,
+    port: 5175,
     proxy: {
-      '/api': {
+      '/render_api': {
         target: 'http://localhost:8002',
         changeOrigin: true,
       },
-      '/static': {
+      '/render_static': {
         target: 'http://localhost:8002',
         changeOrigin: true,
       },
