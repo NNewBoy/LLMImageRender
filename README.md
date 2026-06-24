@@ -79,12 +79,13 @@ LLMImageRender/
 │   │   │       ├── prompt_builder.py
 │   │   │       └── result_postprocess.py
 │   │   └── utils/               # 工具函数
-│   ├── static/                  # 静态文件
+│   ├── render_static/          # 静态文件（图片上传/图库/渲染结果）
 │   ├── seed.py                  # 种子数据脚本
 │   └── requirements.txt
 │
 ├── SPEC.md                      # 软件规格说明书
-└── README.md                    # 本文件
+└── DEPLOY_UBUNTU.md             # Ubuntu 部署指南
+ README.md                    # 本文件
 ```
 
 ## UI 设计
@@ -152,7 +153,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8002
 
 后端服务启动后：
 - API 文档：http://localhost:8002/docs
-- 健康检查：http://localhost:8002/api/health
+- 健康检查：http://localhost:8002/render_api/health
 
 ### 2. 前端启动
 
@@ -223,16 +224,16 @@ http://localhost:5175/llmimagerender/render/scene?image_url=https://d00.paixin.c
 
 | 方法 | 端点 | 说明 |
 |------|------|------|
-| POST | `/api/images/upload` | 上传图片（MD5 去重，相同图片不重复保存） |
-| GET | `/api/images/gallery` | 获取图库（支持分类筛选） |
-| GET | `/api/images/gallery/:id` | 获取图片详情 |
-| PUT | `/api/images/gallery/:id` | 更新图片信息（名称/分类） |
-| DELETE | `/api/images/gallery/:id` | 删除图片（含物理文件） |
-| POST | `/api/render/submit` | 提交渲染任务 |
-| GET | `/api/render/task/:id` | 查询任务状态 |
-| DELETE | `/api/render/task/:id` | 删除渲染任务 |
-| GET | `/api/render/history` | 渲染历史 |
-| GET | `/api/params/presets` | 获取预设参数 |
+| POST | `/render_api/images/upload` | 上传图片（MD5 去重，相同图片不重复保存） |
+| GET | `/render_api/images/gallery` | 获取图库（支持分类筛选） |
+| GET | `/render_api/images/gallery/:id` | 获取图片详情 |
+| PUT | `/render_api/images/gallery/:id` | 更新图片信息（名称/分类） |
+| DELETE | `/render_api/images/gallery/:id` | 删除图片（含物理文件） |
+| POST | `/render_api/render/submit` | 提交渲染任务 |
+| GET | `/render_api/render/task/:id` | 查询任务状态 |
+| DELETE | `/render_api/render/task/:id` | 删除渲染任务 |
+| GET | `/render_api/render/history` | 渲染历史 |
+| GET | `/render_api/params/presets` | 获取预设参数 |
 
 ## LangGraph Agent 工作流
 
@@ -255,9 +256,13 @@ START → parse_input → build_prompt → check_interrupt
 | 变量 | 说明 | 默认值 |
 |------|------|--------|
 | `DASHSCOPE_API_KEY` | 阿里云 DashScope API Key | - |
+| `DASHSCOPE_MODEL` | DashScope 图片生成模型名称 | `qwen-image-2.0-pro` |
 | `DATABASE_URL` | SQLite 数据库路径 | `sqlite:///./llm_image_render.db` |
 | `CORS_ORIGINS` | 允许的前端域名 | `http://localhost:5175` |
 | `MAX_UPLOAD_SIZE_MB` | 上传文件大小限制 | `10` |
+| `UPLOAD_DIR` | 上传图片存储目录 | `render_static/uploads` |
+| `GALLERY_DIR` | 图库图片存储目录 | `render_static/gallery` |
+| `RESULT_DIR` | 渲染结果存储目录 | `render_static/results` |
 
 ## 日志系统
 
@@ -294,6 +299,10 @@ START → parse_input → build_prompt → check_interrupt
 - 标准 `content` 数组格式
 
 **关键参数**：
-- `model`: "qwen-image-2.0-pro"
+- `model`: 由 `DASHSCOPE_MODEL` 环境变量配置（默认 "qwen-image-2.0-pro"）
 - `size`: 使用星号分隔格式（如 "1024*1024"）
 - `messages`: 包含 `image` 和 `text` 对象的数组
+
+## 部署
+
+详见 [Ubuntu 部署指南](DEPLOY_UBUNTU.md)，包含完整的 Nginx 配置、Systemd 服务、SSL 配置等内容。
