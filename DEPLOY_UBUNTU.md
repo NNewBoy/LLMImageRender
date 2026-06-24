@@ -89,7 +89,7 @@ python3.11 --version
 cd /var/LLMImageRender/backend
 
 # 创建虚拟环境
-python3.11 -m venv venv
+python -m venv venv
 
 # 激活虚拟环境
 source venv/bin/activate
