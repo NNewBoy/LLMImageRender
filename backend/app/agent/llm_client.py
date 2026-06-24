@@ -1,6 +1,7 @@
 import os
 import base64
 import logging
+import asyncio
 from typing import Optional
 
 from app.config import settings
@@ -50,7 +51,8 @@ class LLMClient:
 
             logger.info(f"[LLM图片生成] 调用 MultiModalConversation.call, content项数={len(content)}")
 
-            response = MultiModalConversation.call(
+            response = await asyncio.to_thread(
+                MultiModalConversation.call,
                 model=self.model_name,
                 messages=messages,
                 n=1,

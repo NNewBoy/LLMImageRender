@@ -6,8 +6,9 @@
 
 - **单品渲染**：上传柜子图片，AI 智能生成真实感3D渲染效果图，支持自定义纯色背景
 - **场景渲染**：将柜子布置在客厅、卧室、厨房、书房、玄关等典型户型中进行渲染
-- **图库管理**：预设柜子图库，支持分类浏览、图片编辑（改名/改分类）、删除
+- **图库管理**：预设柜子图库，每张图片附带柜子属性（宽/深/高/材质/颜色），选择图库图片时自动填充渲染参数；支持分类浏览、图片编辑（改名/改分类/柜子属性）、删除
 - **渲染历史**：查看和管理所有渲染任务记录，支持删除记录和再次渲染
+- **异步非阻塞渲染**：渲染任务在独立线程池中执行（`asyncio.to_thread`），不阻塞其他 API 请求
 - **外部平台对接**：通过 URL 参数传入图片和渲染参数，支持 `image_id`（图库查询）、`image_url`、`image_base64` 三种图片来源
 
 ## 技术栈
@@ -84,8 +85,8 @@ LLMImageRender/
 │   └── requirements.txt
 │
 ├── SPEC.md                      # 软件规格说明书
-└── DEPLOY_UBUNTU.md             # Ubuntu 部署指南
- README.md                    # 本文件
+├── DEPLOY_UBUNTU.md             # Ubuntu 部署指南
+└── README.md                    # 本文件
 ```
 
 ## UI 设计
@@ -224,10 +225,10 @@ http://localhost:5175/llmimagerender/render/scene?image_url=https://d00.paixin.c
 
 | 方法 | 端点 | 说明 |
 |------|------|------|
-| POST | `/render_api/images/upload` | 上传图片（MD5 去重，相同图片不重复保存） |
+| POST | `/render_api/images/upload` | 上传图片（MD5 去重，支持附带柜子属性） |
 | GET | `/render_api/images/gallery` | 获取图库（支持分类筛选） |
-| GET | `/render_api/images/gallery/:id` | 获取图片详情 |
-| PUT | `/render_api/images/gallery/:id` | 更新图片信息（名称/分类） |
+| GET | `/render_api/images/gallery/:id` | 获取图片详情（含柜子属性） |
+| PUT | `/render_api/images/gallery/:id` | 更新图片信息（名称/分类/柜子属性） |
 | DELETE | `/render_api/images/gallery/:id` | 删除图片（含物理文件） |
 | POST | `/render_api/render/submit` | 提交渲染任务 |
 | GET | `/render_api/render/task/:id` | 查询任务状态 |

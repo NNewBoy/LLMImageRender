@@ -2,7 +2,7 @@ import os
 import hashlib
 import logging
 import shutil
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
+from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -19,7 +19,15 @@ router = APIRouter()
 
 
 @router.post("/upload")
-async def upload_image(file: UploadFile = File(...), db: Session = Depends(get_db)):
+async def upload_image(
+    file: UploadFile = File(...),
+    cabinet_w: int | None = Form(None),
+    cabinet_d: int | None = Form(None),
+    cabinet_h: int | None = Form(None),
+    material: str | None = Form(None),
+    color: str | None = Form(None),
+    db: Session = Depends(get_db),
+):
     logger.info(f"[图片上传] filename={file.filename}, content_type={file.content_type}")
 
     if not file.filename or not is_allowed_image(file.filename):
@@ -50,6 +58,11 @@ async def upload_image(file: UploadFile = File(...), db: Session = Depends(get_d
                 "width": existing.width,
                 "height": existing.height,
                 "file_size": existing.file_size,
+                "cabinet_w": existing.cabinet_w,
+                "cabinet_d": existing.cabinet_d,
+                "cabinet_h": existing.cabinet_h,
+                "material": existing.material,
+                "color": existing.color,
             },
         }
 
@@ -82,6 +95,11 @@ async def upload_image(file: UploadFile = File(...), db: Session = Depends(get_d
         width=width,
         height=height,
         file_size=file_size,
+        cabinet_w=cabinet_w,
+        cabinet_d=cabinet_d,
+        cabinet_h=cabinet_h,
+        material=material,
+        color=color,
     )
     db.add(gallery_image)
     db.commit()
@@ -100,6 +118,11 @@ async def upload_image(file: UploadFile = File(...), db: Session = Depends(get_d
             "width": width,
             "height": height,
             "file_size": file_size,
+            "cabinet_w": cabinet_w,
+            "cabinet_d": cabinet_d,
+            "cabinet_h": cabinet_h,
+            "material": material,
+            "color": color,
         },
     }
 
@@ -126,6 +149,11 @@ def get_gallery(category: str = None, db: Session = Depends(get_db)):
                 "thumbnail_url": img.thumbnail_path or img.file_path,
                 "width": img.width,
                 "height": img.height,
+                "cabinet_w": img.cabinet_w,
+                "cabinet_d": img.cabinet_d,
+                "cabinet_h": img.cabinet_h,
+                "material": img.material,
+                "color": img.color,
             }
             for img in images
         ],
@@ -175,6 +203,16 @@ def update_image(image_id: str, req: UpdateImageRequest, db: Session = Depends(g
         img.name = req.name
     if req.category is not None:
         img.category = req.category
+    if req.cabinet_w is not None:
+        img.cabinet_w = req.cabinet_w
+    if req.cabinet_d is not None:
+        img.cabinet_d = req.cabinet_d
+    if req.cabinet_h is not None:
+        img.cabinet_h = req.cabinet_h
+    if req.material is not None:
+        img.material = req.material
+    if req.color is not None:
+        img.color = req.color
 
     db.commit()
     db.refresh(img)
@@ -192,6 +230,11 @@ def update_image(image_id: str, req: UpdateImageRequest, db: Session = Depends(g
             "thumbnail_url": img.thumbnail_path or img.file_path,
             "width": img.width,
             "height": img.height,
+            "cabinet_w": img.cabinet_w,
+            "cabinet_d": img.cabinet_d,
+            "cabinet_h": img.cabinet_h,
+            "material": img.material,
+            "color": img.color,
         },
     }
 

@@ -1,7 +1,12 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from sqlalchemy import Column, Integer, String, Text, DateTime
 from app.database import Base
+
+# 东八区时区
+_CST = timezone(timedelta(hours=8))
+def _now_cst():
+    return datetime.now(_CST).replace(tzinfo=None)
 
 
 def generate_task_id():
@@ -22,6 +27,6 @@ class RenderTask(Base):
     result_image = Column(String(512), nullable=True)
     params_json = Column(Text, nullable=False)
     error_message = Column(Text, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=_now_cst)
+    updated_at = Column(DateTime, default=_now_cst, onupdate=_now_cst)
     completed_at = Column(DateTime, nullable=True)

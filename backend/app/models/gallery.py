@@ -1,7 +1,12 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from sqlalchemy import Column, Integer, String, DateTime
 from app.database import Base
+
+# 东八区时区
+_CST = timezone(timedelta(hours=8))
+def _now_cst():
+    return datetime.now(_CST).replace(tzinfo=None)
 
 
 def generate_image_id():
@@ -21,4 +26,9 @@ class GalleryImage(Base):
     width = Column(Integer, nullable=True)
     height = Column(Integer, nullable=True)
     file_size = Column(Integer, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    cabinet_w = Column(Integer, nullable=True)
+    cabinet_d = Column(Integer, nullable=True)
+    cabinet_h = Column(Integer, nullable=True)
+    material = Column(String(64), nullable=True)
+    color = Column(String(32), nullable=True)
+    created_at = Column(DateTime, default=_now_cst)

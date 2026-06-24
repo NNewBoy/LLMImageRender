@@ -30,6 +30,8 @@ PRESET_PARAMS = {
         {"value": "entryway", "label": "玄关"},
     ],
     "materials": [
+        {"value": "plywood", "label": "多层板"},
+        {"value": "mdf", "label": "中密度板"},
         {"value": "oak_wood", "label": "橡木"},
         {"value": "walnut_wood", "label": "胡桃木"},
         {"value": "cherry_wood", "label": "樱桃木"},

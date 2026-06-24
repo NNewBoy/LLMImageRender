@@ -48,17 +48,9 @@
               <span class="color-value">{{ localParams.background_color }}</span>
             </div>
             <div class="preset-colors">
-              <button
-                v-for="c in presetBackgroundColors"
-                :key="c.value"
-                type="button"
-                :style="{ background: c.value }"
-                class="preset-color-btn"
-                :class="{ active: localParams.background_color === c.value }"
-                @click="localParams.background_color = c.value"
-                :title="c.label"
-                :aria-label="c.label"
-              >
+              <button v-for="c in presetBackgroundColors" :key="c.value" type="button" :style="{ background: c.value }"
+                class="preset-color-btn" :class="{ active: localParams.background_color === c.value }"
+                @click="localParams.background_color = c.value" :title="c.label" :aria-label="c.label">
                 <span class="preset-color-name">{{ c.label }}</span>
               </button>
             </div>
@@ -76,12 +68,7 @@
         </el-form-item>
 
         <el-form-item label="额外描述" class="full-span">
-          <el-input
-            v-model="localParams.description"
-            type="textarea"
-            :rows="3"
-            placeholder="描述你想要的渲染效果..."
-          />
+          <el-input v-model="localParams.description" type="textarea" :rows="3" placeholder="描述你想要的渲染效果..." />
         </el-form-item>
       </div>
     </el-form>
@@ -131,11 +118,20 @@ const localParams = reactive<RenderParams>({
 })
 
 // 用户修改参数 → 同步到 store
+let syncing = false
 watch(localParams, (val) => {
+  if (syncing) return
   renderStore.updateParams({ ...val })
 }, { deep: true })
 
-// 从 store 同一次性赋值到 localParams（覆盖 URL 参数写入的结果）
+// 监听 store 变化（图库选择等外部操作修改了 store）→ 同步到 localParams
+watch(() => renderStore.params, () => {
+  syncing = true
+  syncFromStore()
+  nextTick(() => { syncing = false })
+}, { deep: true })
+
+// 从 store 同步赋值到 localParams
 function syncFromStore() {
   const s = renderStore.params
   localParams.style = s.style
@@ -164,8 +160,8 @@ onMounted(async () => {
     console.error('加载预设参数失败', e)
   }
   // nextTick 确保父组件的 onMounted（URL 参数写入 store）已执行完毕
-   await nextTick()
-   syncFromStore()
+  await nextTick()
+  syncFromStore()
 })
 </script>
 

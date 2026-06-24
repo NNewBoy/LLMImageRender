@@ -37,6 +37,11 @@ export interface GalleryImage {
   thumbnail_url: string
   width: number
   height: number
+  cabinet_w?: number
+  cabinet_d?: number
+  cabinet_h?: number
+  material?: string
+  color?: string
 }
 
 export interface PresetOption {

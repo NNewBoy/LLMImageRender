@@ -66,7 +66,13 @@ const loadGallery = async () => {
 
 const selectImage = (img: GalleryImage) => {
   selectedId.value = img.image_id
-  renderStore.setGalleryImage(img.image_id, img.url, img.name)
+  renderStore.setGalleryImage(img.image_id, img.url, img.name, {
+    cabinet_w: img.cabinet_w,
+    cabinet_d: img.cabinet_d,
+    cabinet_h: img.cabinet_h,
+    material: img.material,
+    color: img.color,
+  })
   emit('selected', img)
 }
 

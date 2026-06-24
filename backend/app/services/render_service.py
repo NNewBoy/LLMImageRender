@@ -57,8 +57,9 @@ class RenderService:
                 task.status = "completed"
                 task.result_image = result.get("result_image_url", "")
                 task.progress = 100
-                from datetime import datetime
-                task.completed_at = datetime.utcnow()
+                from datetime import datetime, timezone, timedelta
+                _CST = timezone(timedelta(hours=8))
+                task.completed_at = datetime.now(_CST).replace(tzinfo=None)
                 logger.info(f"[渲染执行] 渲染任务完成: task_id={task_id}, result={task.result_image}")
             else:
                 task.status = "failed"

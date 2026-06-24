@@ -1,4 +1,5 @@
 import logging
+import asyncio
 from app.agent.state import RenderAgentState
 from app.agent.skills.image_preprocess import preprocess_image
 from app.agent.skills.param_optimizer import optimize_params
@@ -13,7 +14,7 @@ async def parse_input(state: RenderAgentState) -> RenderAgentState:
     logger.info(f"[parse_input] 开始解析输入, task_id={state.get('task_id')}")
 
     original_path = state.get("original_image_path", "")
-    processed_path = preprocess_image(original_path)
+    processed_path = await asyncio.to_thread(preprocess_image, original_path)
     state["original_image_path"] = processed_path
 
     params = {
