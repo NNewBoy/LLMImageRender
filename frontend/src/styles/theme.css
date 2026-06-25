@@ -281,6 +281,80 @@ html.dark .el-button--default:hover {
   color: var(--text-primary);
 }
 
+/* Button - 禁用态 */
+html.dark .el-button.is-disabled,
+html.dark .el-button.is-disabled:hover,
+html.dark .el-button.is-disabled:focus,
+html.dark .el-button.is-disabled:active {
+  cursor: not-allowed;
+  opacity: 0.45;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--glass-border);
+  color: var(--el-disabled-text-color);
+  box-shadow: none;
+}
+
+html.dark .el-button--primary.is-disabled,
+html.dark .el-button--primary.is-disabled:hover,
+html.dark .el-button--primary.is-disabled:focus,
+html.dark .el-button--primary.is-disabled:active {
+  background: rgba(129, 140, 248, 0.15);
+  border-color: rgba(129, 140, 248, 0.2);
+  color: rgba(129, 140, 248, 0.4);
+  box-shadow: none;
+}
+
+html.dark .el-button--success.is-disabled,
+html.dark .el-button--success.is-disabled:hover,
+html.dark .el-button--success.is-disabled:focus,
+html.dark .el-button--success.is-disabled:active {
+  background: rgba(52, 211, 153, 0.1);
+  border-color: rgba(52, 211, 153, 0.15);
+  color: rgba(52, 211, 153, 0.4);
+  box-shadow: none;
+}
+
+html.dark .el-button--warning.is-disabled,
+html.dark .el-button--warning.is-disabled:hover,
+html.dark .el-button--warning.is-disabled:focus,
+html.dark .el-button--warning.is-disabled:active {
+  background: rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.15);
+  color: rgba(251, 191, 36, 0.4);
+  box-shadow: none;
+}
+
+html.dark .el-button--danger.is-disabled,
+html.dark .el-button--danger.is-disabled:hover,
+html.dark .el-button--danger.is-disabled:focus,
+html.dark .el-button--danger.is-disabled:active {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.15);
+  color: rgba(248, 113, 113, 0.4);
+  box-shadow: none;
+}
+
+html.dark .el-button--default.is-disabled,
+html.dark .el-button--default.is-disabled:hover,
+html.dark .el-button--default.is-disabled:focus,
+html.dark .el-button--default.is-disabled:active {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(148, 163, 184, 0.08);
+  color: var(--el-disabled-text-color);
+  box-shadow: none;
+}
+
+/* Button - Link 禁用态 */
+html.dark .el-button.is-disabled.is-link,
+html.dark .el-button--primary.is-disabled.is-link,
+html.dark .el-button--success.is-disabled.is-link,
+html.dark .el-button--warning.is-disabled.is-link,
+html.dark .el-button--danger.is-disabled.is-link {
+  background: transparent;
+  border-color: transparent;
+  opacity: 0.4;
+}
+
 /* Tabs */
 html.dark .el-tabs--border-card {
   background: transparent;
@@ -328,6 +402,22 @@ html.dark .el-input__wrapper.is-focus,
 html.dark .el-textarea__inner:focus {
   border-color: var(--accent-primary);
   box-shadow: 0 0 0 2px var(--accent-primary-glow);
+}
+
+/* Input / Textarea - 禁用态 */
+html.dark .el-textarea.is-disabled .el-textarea__inner,
+html.dark .el-input.is-disabled .el-input__wrapper {
+  cursor: not-allowed;
+  opacity: 0.45;
+  background: rgba(255, 255, 255, 0.02);
+  border-color: var(--el-disabled-border-color);
+  color: var(--el-disabled-text-color);
+  box-shadow: none;
+}
+
+html.dark .el-textarea.is-disabled .el-textarea__inner:hover,
+html.dark .el-input.is-disabled .el-input__wrapper:hover {
+  border-color: var(--el-disabled-border-color);
 }
 
 html.dark .el-select__wrapper {
