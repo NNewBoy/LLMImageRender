@@ -43,10 +43,13 @@ LLMImageRender/
 │   │   │   ├── HistoryPage.vue
 │   │   │   └── GalleryPage.vue
 │   │   ├── stores/              # Pinia状态管理
+│   │   │   ├── render.ts        # 渲染参数状态
+│   │   │   ├── task.ts          # 任务列表状态
+│   │   │   └── theme.ts         # 主题切换状态（浅色/深色 + URL参数）
 │   │   ├── api/                 # API请求封装
 │   │   ├── router/              # 路由配置
 │   │   ├── styles/              # 全局样式
-│   │   │   └── theme.css        # Glassmorphism + Dark Mode 主题
+│   │   │   └── theme.css        # Glassmorphism 主题（Light + Dark Mode）
 │   │   ├── utils/               # 工具函数
 │   │   │   └── urlParams.ts     # URL 参数解析（外部平台对接）
 │   │   └── types/               # TypeScript类型
@@ -91,15 +94,18 @@ LLMImageRender/
 
 ## UI 设计
 
-前端采用 **Glassmorphism + Dark Mode** 风格，支持 PC / 平板 / 移动端响应式自适应。
+前端采用 **Glassmorphism + Light/Dark Mode** 风格，支持浅色/深色主题切换、PC / 平板 / 移动端响应式自适应。
 
 ### 设计要点
 
-- **暗色主题**：`#0a0a0f` 深色背景 + 动画渐变光球，营造沉浸感
+- **双主题模式**：`:root` 为浅色模式（默认），`html.dark` 为深色模式覆盖；顶部导航栏一键切换，刷新后保持上次选择
+- **浅色主题**：`#eef2f8` 浅灰蓝背景 + `rgba(248,250,252,0.75)` 玻璃面 + 深色文字（对比度 ≥ 4.5:1）
+- **深色主题**：`#0a0a0f` 深色背景 + 动画渐变光球，营造沉浸感
 - **玻璃拟态**：`backdrop-filter: blur(20px)` + 半透明边框，卡片浮于背景之上
 - **强调色**：靛蓝 `#6366f1` 为主色，紫色 `#8b5cf6` 为辅助
 - **字体**：Inter（Google Fonts），配合中文系统字体回退
-- **Element Plus 暗色模式**：全组件 CSS 变量覆盖，统一玻璃风格
+- **Element Plus 双模式**：全组件 CSS 变量覆盖（`html:not(.dark)` / `html.dark`），统一玻璃风格
+- **主题持久化**：Pinia store + localStorage 持久化，URL 参数 `?theme=light/dark` 支持外部平台指定主题
 
 ### 响应式断点
 
@@ -189,6 +195,7 @@ http://localhost:5175/llmimagerender/render/scene?<params>
 
 | 参数 | 说明 | 示例 |
 |------|------|------|
+| `theme` | 主题模式（light / dark），全局生效，便于外部平台指定 | `theme=light` |
 | `image_id` | 图库图片 ID（直接查询图库） | `image_id=abc123def456` |
 | `image_url` | 图片 URL 地址 | `image_url=https://example.com/cabinet.png` |
 | `image_base64` | 图片 Base64（data URI） | `image_base64=data:image/png;base64,iVBOR...` |
@@ -204,11 +211,14 @@ http://localhost:5175/llmimagerender/render/scene?<params>
 | `height` | 柜子高度 (mm) | `height=2200` |
 | `depth` | 柜子深度 (mm) | `depth=600` |
 
-> 有传参则使用传入值，无传参则使用默认值。`image_id`、`image_url` 和 `image_base64` 三选一，优先级：`image_id` > `image_url` > `image_base64`。颜色值中的 `#` 无需 URL 编码，代码自动处理。
+> 有传参则使用传入值，无传参则使用默认值。`image_id`、`image_url` 和 `image_base64` 三选一，优先级：`image_id` > `image_url` > `image_base64`。颜色值中的 `#` 无需 URL 编码，代码自动处理。`theme` 参数为全局参数，可附加在任意页面 URL 上。
 
 ### 示例
 
 ```bash
+# 指定浅色主题打开渲染页（外部平台嵌入）
+http://localhost:5175/llmimagerender/render/single?theme=light&image_id=abc123def456&style=nordic&lighting=warm
+
 # 单品渲染：通过图库 image_id 传图（查不到则提示）
 http://localhost:5175/llmimagerender/render/single?image_id=abc123def456&style=nordic&lighting=warm&material=oak_wood
 

@@ -18,19 +18,47 @@
           <el-icon :size="18"><component :is="item.icon" /></el-icon>
           <span>{{ item.label }}</span>
         </router-link>
+
+        <!-- 主题切换 -->
+        <button
+          class="theme-toggle"
+          @click="themeStore.toggle()"
+          :aria-label="themeStore.isDark ? '切换到浅色模式' : '切换到深色模式'"
+          :title="themeStore.isDark ? '切换到浅色模式' : '切换到深色模式'"
+        >
+          <el-icon :size="18" class="theme-icon">
+            <Sunny v-if="themeStore.isDark" />
+            <Moon v-else />
+          </el-icon>
+        </button>
       </nav>
 
-      <!-- Mobile toggle -->
-      <button
-        class="nav-toggle"
-        :class="{ open: mobileOpen }"
-        @click="mobileOpen = !mobileOpen"
-        aria-label="切换菜单"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <!-- Mobile actions: theme toggle + menu toggle -->
+      <div class="nav-mobile-actions">
+        <button
+          class="theme-toggle"
+          @click="themeStore.toggle()"
+          :aria-label="themeStore.isDark ? '切换到浅色模式' : '切换到深色模式'"
+          :title="themeStore.isDark ? '切换到浅色模式' : '切换到深色模式'"
+        >
+          <el-icon :size="18" class="theme-icon">
+            <Sunny v-if="themeStore.isDark" />
+            <Moon v-else />
+          </el-icon>
+        </button>
+
+        <!-- Mobile menu toggle -->
+        <button
+          class="nav-toggle"
+          :class="{ open: mobileOpen }"
+          @click="mobileOpen = !mobileOpen"
+          aria-label="切换菜单"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
     </div>
 
     <!-- Mobile dropdown -->
@@ -55,10 +83,12 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { HomeFilled, Grid, Clock, PictureFilled } from '@element-plus/icons-vue'
+import { HomeFilled, Grid, Clock, PictureFilled, Sunny, Moon } from '@element-plus/icons-vue'
+import { useThemeStore } from '@/stores/theme'
 
 const route = useRoute()
 const mobileOpen = ref(false)
+const themeStore = useThemeStore()
 
 const menuItems = [
   { path: '/', label: '首页', icon: HomeFilled },
@@ -142,6 +172,44 @@ watch(() => route.path, () => {
 .nav-link.active {
   color: var(--accent-primary-light);
   background: rgba(99, 102, 241, 0.12);
+}
+
+/* Theme toggle */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-left: 4px;
+  padding: 0;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+  color: var(--accent-primary-light);
+  background: rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.15);
+}
+
+.theme-icon {
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle:hover .theme-icon {
+  transform: rotate(30deg);
+}
+
+/* Mobile actions (theme + hamburger) */
+.nav-mobile-actions {
+  display: none;
+  align-items: center;
+  gap: 4px;
 }
 
 /* Mobile hamburger */
@@ -241,6 +309,10 @@ watch(() => route.path, () => {
 
   .nav-desktop {
     display: none;
+  }
+
+  .nav-mobile-actions {
+    display: flex;
   }
 
   .nav-toggle {
