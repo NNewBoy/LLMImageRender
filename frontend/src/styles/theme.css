@@ -21,6 +21,9 @@
   --glass-border-hover: rgba(15, 23, 42, 0.18);
   --glass-blur: 20px;
 
+  /* Media / image display backdrop - Light */
+  --media-bg: rgba(15, 23, 42, 0.02);
+
   /* Accent colors (shared) */
   --accent-primary: #6366f1;
   --accent-primary-light: #818cf8;
@@ -70,6 +73,9 @@ html.dark {
   --glass-bg-strong: rgba(255, 255, 255, 0.12);
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-border-hover: rgba(255, 255, 255, 0.2);
+
+  /* Media / image display backdrop - Dark */
+  --media-bg: rgba(0, 0, 0, 0.3);
 
   /* Text - Dark Mode */
   --text-primary: #f8fafc;
@@ -696,12 +702,6 @@ html:not(.dark) .el-select-dropdown__item.selected {
   color: var(--accent-primary);
 }
 
-/* Image View overlay */
-html:not(.dark) .el-image-viewer__wrapper {
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(12px);
-}
-
 /* Message */
 html:not(.dark) .el-message {
   background: rgba(255, 255, 255, 0.95);
@@ -1150,12 +1150,6 @@ html.dark .el-select-dropdown__item:hover {
 
 html.dark .el-select-dropdown__item.selected {
   color: var(--accent-primary-light);
-}
-
-/* Image View overlay */
-html.dark .el-image-viewer__wrapper {
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(12px);
 }
 
 /* Message */

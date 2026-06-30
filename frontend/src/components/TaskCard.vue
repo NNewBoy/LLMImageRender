@@ -55,7 +55,7 @@ const formatTime = (time: string) => {
   position: relative;
   height: 180px;
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--media-bg);
 }
 
 .task-thumbnail :deep(img) {

@@ -115,7 +115,7 @@ onMounted(loadGallery)
   overflow: hidden;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--media-bg);
 }
 
 .gallery-item:hover {

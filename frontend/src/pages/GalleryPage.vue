@@ -241,7 +241,7 @@ onMounted(loadGallery)
   position: relative;
   height: 200px;
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--media-bg);
 }
 
 .gallery-image :deep(img) {

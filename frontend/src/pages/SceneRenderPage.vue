@@ -161,7 +161,7 @@ const onRoomChange = (val: string) => {
   justify-content: center;
   border-radius: var(--radius-md);
   border: 1px solid var(--glass-border);
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--media-bg);
   padding: 8px;
   height: 300px;
 }

@@ -62,7 +62,7 @@ const downloadImage = () => {
   border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--glass-border);
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--media-bg);
 }
 
 .image-label {
