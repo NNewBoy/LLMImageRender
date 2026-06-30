@@ -239,6 +239,34 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
+  /* 移动端：去除点击高亮与长按选区闪烁 */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 移动端：禁用非文本 UI 元素的长按选区/系统弹窗，
+   保留输入框与正文文本的正常选择能力 */
+button,
+img,
+.glass,
+.glass-card,
+.task-card,
+.gallery-item,
+.preview-container,
+.compare-image,
+.task-thumbnail {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* 移动端：修复 Element Plus 锁屏（el-image-viewer / 弹窗）打开时，
+   useLockscreen 给 body 写入内联 width: calc(100% - 滚动条宽度) 导致
+   整个窗口向左缩小的问题。移动端滚动条为 overlay 不占宽度，
+   该补偿不正确，重置回 100%（!important 用于覆盖内联样式）。 */
+@media (max-width: 768px) {
+  body[class*="parent--hidden"] {
+    width: 100% !important;
+  }
 }
 
 /* ============================================================

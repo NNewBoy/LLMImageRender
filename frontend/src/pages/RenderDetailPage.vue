@@ -361,11 +361,11 @@ onUnmounted(stopPolling)
 .params-grid-body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   overflow: hidden;
   margin: 0 4px 4px;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--el-fill-color-lighter);
 }
 
 .param-item {
@@ -373,13 +373,13 @@ onUnmounted(stopPolling)
   flex-direction: column;
   gap: 6px;
   padding: 16px 18px;
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-right: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
   transition: background 0.2s ease;
 }
 
 .param-item:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--el-fill-color-light);
 }
 
 .param-item:nth-child(3n) {
@@ -413,11 +413,11 @@ onUnmounted(stopPolling)
   }
 
   .param-item {
-    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    border-right: 1px solid var(--glass-border);
   }
 
   .param-item:nth-child(3n) {
-    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    border-right: 1px solid var(--glass-border);
   }
 
   .param-item:nth-child(2n) {
