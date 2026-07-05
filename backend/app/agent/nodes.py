@@ -1,13 +1,24 @@
 import logging
 import asyncio
+import urllib.request
 from app.agent.state import RenderAgentState
 from app.agent.skills.image_preprocess import preprocess_image
 from app.agent.skills.param_optimizer import optimize_params
 from app.agent.skills.prompt_builder import build_system_prompt, build_render_prompt
 from app.agent.skills.room_template import build_scene_prompt
 from app.agent.llm_client import llm_client
+from app.services.file_service import save_result_image
 
 logger = logging.getLogger(__name__)
+
+
+async def _download_remote_image(url: str, timeout: float = 60.0) -> bytes:
+    """下载远程图片为二进制内容（LLM 返回的图片 URL 为临时地址，需落盘持久化）。"""
+    def _fetch():
+        req = urllib.request.Request(url, headers={"User-Agent": "LLMImageRender/1.0"})
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return resp.read()
+    return await asyncio.to_thread(_fetch)
 
 
 async def parse_input(state: RenderAgentState) -> RenderAgentState:
@@ -85,7 +96,20 @@ async def call_llm_render(state: RenderAgentState) -> RenderAgentState:
         )
 
         if result.get("success"):
-            state["result_image_url"] = result.get("image_url", "")
+            image_url = result.get("image_url", "")
+            # LLM 返回的图片 URL 为临时地址（会过期），需下载到本地持久化保存
+            if image_url.startswith("http"):
+                task_id = state.get("task_id") or "render"
+                try:
+                    image_bytes = await _download_remote_image(image_url)
+                    local_url = save_result_image(image_bytes, task_id)
+                    state["result_image_url"] = local_url
+                    logger.info(f"[call_llm_render] 临时图片已保存到本地: {local_url}")
+                except Exception as e:
+                    logger.error(f"[call_llm_render] 下载临时图片失败，回退使用原URL: {e}")
+                    state["result_image_url"] = image_url
+            else:
+                state["result_image_url"] = image_url
             state["result_image_base64"] = result.get("image_base64")
             state["progress"] = 70
             state["status"] = "processing"
