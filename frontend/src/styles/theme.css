@@ -19,7 +19,8 @@
   --glass-bg-strong: rgba(255, 255, 255, 0.72);
   --glass-border: rgba(255, 255, 255, 0.7);
   --glass-border-hover: rgba(255, 255, 255, 0.8);
-  --glass-blur: 20px;
+  --glass-blur: 16px;
+  --saturate: 180%;
 
   /* Media / image display backdrop - Light */
   --media-bg: rgba(15, 23, 42, 0.02);
@@ -73,6 +74,8 @@ html.dark {
   --glass-bg-strong: rgba(40, 44, 60, 0.62);
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-border-hover: rgba(255, 255, 255, 0.18);
+  --glass-blur: 16px;
+  --saturate: 160%;
 
   /* Media / image display backdrop - Dark */
   --media-bg: rgba(0, 0, 0, 0.3);
@@ -93,7 +96,7 @@ html.dark {
 
   /* Shadows - Dark */
   --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
-  --shadow-glass-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+  --shadow-glass-lg: 0 12px 40px rgba(0, 0, 0, 0.55);
 
   /* Accent glow - Dark (stronger) */
   --accent-primary-glow: rgba(99, 102, 241, 0.4);
@@ -269,26 +272,28 @@ img,
    ============================================================ */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--saturate));
   border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-glass);
 }
 
 .glass-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--saturate));
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-glass);
-  transition: all 0.25s ease;
+  transition: background 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1), transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card:hover {
   background: var(--glass-bg-hover);
-  border-color: var(--glass-border-hover);
   box-shadow: var(--shadow-glass-lg);
+  transform: translateY(-2px);
 }
 
 /* ============================================================
