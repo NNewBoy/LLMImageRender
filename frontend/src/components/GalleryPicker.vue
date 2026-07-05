@@ -92,11 +92,12 @@ onMounted(loadGallery)
 }
 
 .gallery-title {
-  width: 100px;
+  flex-shrink: 0;
   margin-right: 12px;
   font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
+  white-space: nowrap;
 }
 
 .gallery-grid {

@@ -6,12 +6,24 @@
     </div>
 
     <div class="gallery-filter glass-card">
-      <el-radio-group v-model="category" @change="loadGallery">
-        <el-radio-button value="">全部</el-radio-button>
-        <el-radio-button v-for="c in categories" :key="c.value" :value="c.value">
-          {{ c.label }}
-        </el-radio-button>
-      </el-radio-group>
+      <button
+        type="button"
+        class="filter-tag"
+        :class="{ active: category === '' }"
+        @click="setCategory('')"
+      >
+        全部
+      </button>
+      <button
+        v-for="c in categories"
+        :key="c.value"
+        type="button"
+        class="filter-tag"
+        :class="{ active: category === c.value }"
+        @click="setCategory(c.value)"
+      >
+        {{ c.label }}
+      </button>
     </div>
 
     <div v-loading="loading" class="gallery-grid">
@@ -148,6 +160,11 @@ const handleDelete = async (img: GalleryImage) => {
   }
 }
 
+const setCategory = (val: string) => {
+  category.value = val
+  loadGallery()
+}
+
 const loadGallery = async () => {
   loading.value = true
   try {
@@ -195,14 +212,46 @@ onMounted(loadGallery)
 /* ---- Filter Bar ---- */
 .gallery-filter {
   margin-bottom: 24px;
-  padding: 10px 16px;
-  overflow-x: auto;
+  padding: 12px 16px;
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   align-items: center;
 }
 
-.gallery-filter :deep(.el-radio-group) {
-  flex-wrap: nowrap;
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  background: var(--el-fill-color-light);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-tag:hover {
+  color: var(--text-primary);
+  border-color: var(--glass-border-hover);
+  background: var(--el-fill-color);
+}
+
+.filter-tag.active {
+  color: #fff;
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 12px var(--accent-primary-glow);
+}
+
+.filter-tag:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 /* ---- Gallery Grid ---- */

@@ -11,11 +11,11 @@
     <div class="render-content">
       <el-card class="image-card glass-card">
         <el-tabs v-model="activeTab" type="border-card">
-          <el-tab-pane label="上传图片" name="upload">
-            <ImageUploader @uploaded="onImageUploaded" />
-          </el-tab-pane>
           <el-tab-pane label="从图库选择" name="gallery">
             <GalleryPicker @selected="onGallerySelected" />
+          </el-tab-pane>
+          <el-tab-pane label="上传图片" name="upload">
+            <ImageUploader @uploaded="onImageUploaded" />
           </el-tab-pane>
         </el-tabs>
         <div v-if="renderStore.selectedImageUrl" class="preview-section">
@@ -61,7 +61,7 @@ import { parseUrlParams, applyExternalImage } from '@/utils/urlParams'
 
 const route = useRoute()
 const renderStore = useRenderStore()
-const activeTab = ref('upload')
+const activeTab = ref('gallery')
 
 onMounted(async () => {
   renderStore.setMode('scene')
@@ -142,6 +142,10 @@ const onRoomChange = (val: string) => {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.image-card :deep(.el-tabs) {
+  overflow: hidden;
 }
 
 .preview-section {

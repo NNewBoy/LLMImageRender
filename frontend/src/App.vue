@@ -7,14 +7,16 @@
       <div class="bg-orb bg-orb--3"></div>
     </div>
 
-    <AppHeader />
-    <main class="main-content">
-      <router-view v-slot="{ Component }">
-        <transition name="page" mode="out-in">
-          <component :is="Component" />
-        </transition>
-      </router-view>
-    </main>
+    <el-scrollbar class="app-scroll">
+      <AppHeader />
+      <main class="main-content">
+        <router-view v-slot="{ Component }">
+          <transition name="page" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
+      </main>
+    </el-scrollbar>
   </div>
 </template>
 
@@ -25,9 +27,18 @@ import AppHeader from './components/AppHeader.vue'
 <style>
 #app-layout {
   position: relative;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+
+/* 内容滚动区：用 ElScrollbar 接管滚动，不再使用系统滚动条 */
+.app-scroll {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  z-index: 1;
 }
 
 /* Animated background orbs */
