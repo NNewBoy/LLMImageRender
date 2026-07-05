@@ -29,6 +29,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { Check } from '@element-plus/icons-vue'
 import { getGallery } from '@/api/gallery'
 import { useRenderStore } from '@/stores/render'
 import type { GalleryImage, PresetOption } from '@/types'

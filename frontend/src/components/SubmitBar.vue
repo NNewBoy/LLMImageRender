@@ -18,6 +18,7 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { Upload } from '@element-plus/icons-vue'
 import { submitRender } from '@/api/render'
 import { useRenderStore } from '@/stores/render'
 

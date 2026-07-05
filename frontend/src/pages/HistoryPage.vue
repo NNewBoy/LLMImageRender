@@ -34,6 +34,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { FolderOpened } from '@element-plus/icons-vue'
 import { getHistory } from '@/api/render'
 import TaskCard from '@/components/TaskCard.vue'
 import type { RenderTask } from '@/types'

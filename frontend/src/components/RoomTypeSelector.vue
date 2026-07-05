@@ -24,6 +24,7 @@
 </template>
 
 <script setup lang="ts">
+import { HomeFilled, Moon, KnifeFork, Reading, Key } from '@element-plus/icons-vue'
 defineProps<{ modelValue: string }>()
 defineEmits(['update:modelValue'])
 

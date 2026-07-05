@@ -84,6 +84,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Edit, Delete, PictureFilled } from '@element-plus/icons-vue'
 import { getGallery, deleteImage, updateImage } from '@/api/gallery'
 import ImageViewer from '@/components/ImageViewer.vue'
 import type { GalleryImage, PresetOption } from '@/types'

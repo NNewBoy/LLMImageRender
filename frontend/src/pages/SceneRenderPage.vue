@@ -50,6 +50,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { ArrowLeft } from '@element-plus/icons-vue'
 import { useRenderStore } from '@/stores/render'
 import ImageUploader from '@/components/ImageUploader.vue'
 import GalleryPicker from '@/components/GalleryPicker.vue'

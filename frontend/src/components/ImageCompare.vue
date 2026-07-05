@@ -29,6 +29,7 @@
 
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
+import { PictureFilled, Download } from '@element-plus/icons-vue'
 import ImageViewer from '@/components/ImageViewer.vue'
 
 const props = defineProps<{

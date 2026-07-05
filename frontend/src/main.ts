@@ -1,11 +1,13 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
+// Element Plus 按需引入：el-* 组件与 v-loading 指令由 unplugin-vue-components 自动导入
+// 仅需全局引入暗色模式 CSS 变量、基础变量，以及以 JS API 形式调用的 ElMessage / ElMessageBox 样式
 import 'element-plus/theme-chalk/dark/css-vars.css'
+import 'element-plus/theme-chalk/base.css'
+import 'element-plus/theme-chalk/el-message.css'
+import 'element-plus/theme-chalk/el-message-box.css'
 import './styles/theme.css'
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import App from './App.vue'
 import router from './router'
 import { useThemeStore } from '@/stores/theme'
@@ -23,10 +25,5 @@ const themeStore = useThemeStore(pinia)
 themeStore.initFromUrl()
 
 app.use(router)
-app.use(ElementPlus)
-
-for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-  app.component(key, component)
-}
 
 app.mount('#app')

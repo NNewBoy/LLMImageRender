@@ -23,6 +23,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { Clock, Loading, CircleCheck, CircleClose } from '@element-plus/icons-vue'
 
 const props = defineProps<{
   status: string

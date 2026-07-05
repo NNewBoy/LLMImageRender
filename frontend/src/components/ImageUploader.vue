@@ -30,6 +30,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { Plus, Document } from '@element-plus/icons-vue'
 import { uploadImage } from '@/api/gallery'
 import { useRenderStore } from '@/stores/render'
 

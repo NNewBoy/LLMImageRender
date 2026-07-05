@@ -100,6 +100,7 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { ArrowLeft, RefreshRight, Delete } from '@element-plus/icons-vue'
 import { getTaskStatus, deleteTask, submitRender } from '@/api/render'
 import TaskStatus from '@/components/TaskStatus.vue'
 import ImageCompare from '@/components/ImageCompare.vue'
