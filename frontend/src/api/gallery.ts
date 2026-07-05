@@ -8,7 +8,7 @@ export async function uploadImage(file: File) {
   })
 }
 
-export async function getGallery(category?: string, order: 'desc' | 'asc' = 'desc') {
+export async function getGallery(category?: string, order: 'desc' | 'asc' = 'asc') {
   return api.get('/images/gallery', { params: { category, order } })
 }
 
