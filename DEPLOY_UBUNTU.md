@@ -273,6 +273,7 @@ location /llmimagerender {
 
 # API 代理
 location /render_api/ {
+    client_max_body_size 10M;
     proxy_pass http://127.0.0.1:8002/render_api/;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
@@ -315,6 +316,7 @@ server {
 
     # API 代理
     location /render_api/ {
+        client_max_body_size 10M;
         proxy_pass http://127.0.0.1:8002/render_api/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
