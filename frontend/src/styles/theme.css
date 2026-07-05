@@ -14,11 +14,11 @@
   /* 玻璃卡片表面 */
 
   /* Glass surfaces - Light */
-  --glass-bg: rgba(248, 250, 252, 0.75);
-  --glass-bg-hover: rgba(248, 250, 252, 0.9);
-  --glass-bg-strong: rgba(255, 255, 255, 0.95);
-  --glass-border: rgba(15, 23, 42, 0.1);
-  --glass-border-hover: rgba(15, 23, 42, 0.18);
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-bg-hover: rgba(255, 255, 255, 0.65);
+  --glass-bg-strong: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-border-hover: rgba(255, 255, 255, 0.8);
   --glass-blur: 20px;
 
   /* Media / image display backdrop - Light */
@@ -68,11 +68,11 @@ html.dark {
   --bg-surface: #1a1a25;
 
   /* Glass surfaces - Dark */
-  --glass-bg: rgba(255, 255, 255, 0.06);
-  --glass-bg-hover: rgba(255, 255, 255, 0.1);
-  --glass-bg-strong: rgba(255, 255, 255, 0.12);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-border-hover: rgba(255, 255, 255, 0.2);
+  --glass-bg: rgba(30, 32, 44, 0.45);
+  --glass-bg-hover: rgba(50, 54, 72, 0.55);
+  --glass-bg-strong: rgba(40, 44, 60, 0.62);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-hover: rgba(255, 255, 255, 0.18);
 
   /* Media / image display backdrop - Dark */
   --media-bg: rgba(0, 0, 0, 0.3);
@@ -147,11 +147,6 @@ html:not(.dark) {
   /* Mask */
   --el-mask-color: rgba(255, 255, 255, 0.7);
   --el-mask-color-extra-light: rgba(255, 255, 255, 0.3);
-
-  /* Radius */
-  --el-border-radius-base: 8px;
-  --el-border-radius-small: 6px;
-  --el-border-radius-round: 20px;
 
   /* Disabled */
   --el-disabled-bg-color: rgba(15, 23, 42, 0.04);

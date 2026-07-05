@@ -122,6 +122,12 @@ LLMImageRender/
 - 过渡动画 200-250ms
 - 路由链接正确的悬停/激活视觉反馈
 
+### 移动端体验
+
+- 全局 `-webkit-tap-highlight-color: transparent` 去除点击蓝色高亮
+- 非文本交互元素（按钮/图片/玻璃卡片/媒体容器）禁用长按选区与系统弹窗，输入框与正文文本选择能力保留
+- 修复 Element Plus `el-image` 预览 / 弹窗锁屏导致 body 被收窄左缩的问题（移动端滚动条为 overlay，锁屏的滚动条宽度补偿不正确，已用 `!important` 重置 body 宽度为 100%）
+
 ## 快速开始
 
 ### 环境要求

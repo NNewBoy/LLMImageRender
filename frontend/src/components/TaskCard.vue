@@ -4,6 +4,7 @@
       <ImageViewer
         :src="task.result_image_url || task.original_image_url"
         :alt="task.result_image_url ? '渲染结果' : '原始图片'"
+        :preview="false"
       />
       <div class="task-status-badge" :class="task.status">
         {{ statusLabel }}

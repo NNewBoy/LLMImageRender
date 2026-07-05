@@ -22,7 +22,7 @@
         :style="{ animationDelay: `${index * 40}ms` }"
       >
         <div class="gallery-image">
-          <ImageViewer :src="img.thumbnail_url" :alt="img.name" />
+          <ImageViewer :src="img.thumbnail_url" :alt="img.name" :preview="false" />
           <div class="image-overlay">
             <span class="overlay-tag">{{ categoryLabel(img.category) }}</span>
           </div>
@@ -50,7 +50,7 @@
     </div>
 
     <!-- 编辑对话框 -->
-    <el-dialog v-model="editDialogVisible" title="编辑图片" width="400px">
+    <el-dialog v-model="editDialogVisible" title="编辑图片" width="400px" append-to-body>
       <el-form :model="editForm" label-width="80px">
         <el-form-item label="图片名称">
           <el-input v-model="editForm.name" placeholder="请输入图片名称" />

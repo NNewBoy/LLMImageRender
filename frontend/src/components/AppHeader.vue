@@ -118,7 +118,6 @@ watch(() => route.path, () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 1280px;
   margin: 0 auto;
   padding: 10px 20px;
   border-radius: 16px;
@@ -151,6 +150,7 @@ watch(() => route.path, () => {
 }
 
 .nav-link {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -162,16 +162,26 @@ watch(() => route.path, () => {
   color: var(--text-muted);
   transition: all 0.2s ease;
   cursor: pointer;
+  transition: color 150ms cubic-bezier(0.16, 1, 0.3, 1), background 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nav-link:hover {
-  color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.06);
+  color: var(--accent-primary-light);
 }
 
 .nav-link.active {
   color: var(--accent-primary-light);
-  background: rgba(99, 102, 241, 0.12);
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 2px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent-primary-light);
 }
 
 /* Theme toggle */
@@ -304,7 +314,7 @@ watch(() => route.path, () => {
   }
 
   .header-inner {
-    padding: 8px 16px;
+    padding: 1px 16px;
   }
 
   .nav-desktop {
