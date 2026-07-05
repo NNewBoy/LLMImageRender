@@ -31,7 +31,6 @@ declare module 'vue' {
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
-    ElTag: typeof import('element-plus/es')['ElTag']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     GalleryPicker: typeof import('./components/GalleryPicker.vue')['default']
     ImageCompare: typeof import('./components/ImageCompare.vue')['default']
