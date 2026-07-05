@@ -281,7 +281,7 @@ location /render_api/ {
 }
 
 # 静态资源代理（图片、上传文件、渲染结果）
-location /render_static/ {
+location ^~ /render_static/ {
     proxy_pass http://127.0.0.1:8002/render_static/;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
@@ -323,7 +323,7 @@ server {
     }
 
     # 静态资源代理
-    location /render_static/ {
+    location ^~ /render_static/ {
         proxy_pass http://127.0.0.1:8002/render_static/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
