@@ -128,13 +128,16 @@ async def upload_image(
 
 
 @router.get("/gallery")
-def get_gallery(category: str = None, db: Session = Depends(get_db)):
-    logger.info(f"[获取图片列表] category={category}")
+def get_gallery(category: str = None, order: str = "desc", db: Session = Depends(get_db)):
+    logger.info(f"[获取图片列表] category={category}, order={order}")
 
     query = db.query(GalleryImage)
     if category:
         query = query.filter(GalleryImage.category == category)
-    images = query.order_by(GalleryImage.created_at.desc()).all()
+    if order == "asc":
+        images = query.order_by(GalleryImage.created_at.asc()).all()
+    else:
+        images = query.order_by(GalleryImage.created_at.desc()).all()
 
     logger.info(f"[获取图片列表] 返回 {len(images)} 张图片")
 

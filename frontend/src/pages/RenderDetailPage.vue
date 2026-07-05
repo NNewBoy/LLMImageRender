@@ -7,26 +7,18 @@
           <span>返回</span>
         </button>
         <h2>渲染详情</h2>
-        <el-tag
-          v-if="task"
-          :type="tagType"
-          size="large"
-          effect="dark"
-          round
-          :class="['status-tag', `status-tag--${task.status}`]"
-        >{{ statusLabel }}</el-tag>
       </div>
       <div v-if="task" class="header-actions">
         <el-button
           type="primary"
           :loading="reRenderLoading"
-          :disabled="!task.image_id"
+          :disabled="!task.image_id || task.status === 'processing'"
           @click="handleReRender"
         >
           <el-icon><RefreshRight /></el-icon>
           <span>再次渲染</span>
         </el-button>
-        <el-button type="danger" plain @click="handleDelete">
+        <el-button type="danger" plain :disabled="task.status === 'processing'" @click="handleDelete">
           <el-icon><Delete /></el-icon>
           <span>删除</span>
         </el-button>
@@ -97,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowLeft, RefreshRight, Delete } from '@element-plus/icons-vue'
@@ -111,26 +103,6 @@ const router = useRouter()
 const task = ref<RenderTask | null>(null)
 let pollTimer: any = null
 const reRenderLoading = ref(false)
-
-const statusLabel = computed(() => {
-  const map: Record<string, string> = {
-    queued: '排队中',
-    processing: '处理中',
-    completed: '已完成',
-    failed: '失败',
-  }
-  return map[task.value?.status || ''] || ''
-})
-
-const tagType = computed(() => {
-  const map: Record<string, string> = {
-    queued: 'warning',
-    processing: 'primary',
-    completed: 'success',
-    failed: 'danger',
-  }
-  return (map[task.value?.status || ''] || 'info') as any
-})
 
 const fetchTask = async () => {
   const taskId = route.params.taskId as string
@@ -278,24 +250,6 @@ onUnmounted(stopPolling)
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-/* Status tag glow */
-.status-tag {
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-}
-
-.status-tag--completed {
-  box-shadow: 0 0 16px rgba(34, 197, 94, 0.3);
-}
-
-.status-tag--processing {
-  box-shadow: 0 0 16px rgba(99, 102, 241, 0.4);
-}
-
-.status-tag--failed {
-  box-shadow: 0 0 16px rgba(239, 68, 68, 0.3);
 }
 
 .header-actions {

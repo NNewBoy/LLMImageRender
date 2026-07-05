@@ -1,7 +1,7 @@
 <template>
   <div class="task-status">
     <div class="status-indicator">
-      <el-icon :size="48" :class="statusClass">
+      <el-icon :size="48" :class="[statusClass, { 'is-loading': status === 'processing' }]">
         <Clock v-if="status === 'queued'" />
         <Loading v-else-if="status === 'processing'" />
         <CircleCheck v-else-if="status === 'completed'" />

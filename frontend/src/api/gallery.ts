@@ -8,8 +8,8 @@ export async function uploadImage(file: File) {
   })
 }
 
-export async function getGallery(category?: string) {
-  return api.get('/images/gallery', { params: { category } })
+export async function getGallery(category?: string, order: 'desc' | 'asc' = 'desc') {
+  return api.get('/images/gallery', { params: { category, order } })
 }
 
 export async function getGalleryDetail(imageId: string) {
