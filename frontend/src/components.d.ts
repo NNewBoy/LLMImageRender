@@ -38,6 +38,7 @@ declare module 'vue' {
     ImageViewer: typeof import('./components/ImageViewer.vue')['default']
     ParamPanel: typeof import('./components/ParamPanel.vue')['default']
     RoomTypeSelector: typeof import('./components/RoomTypeSelector.vue')['default']
+    RouteProgress: typeof import('./components/RouteProgress.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SubmitBar: typeof import('./components/SubmitBar.vue')['default']

@@ -1,5 +1,8 @@
 <template>
   <div id="app-layout">
+    <!-- 路由跳转进度条 -->
+    <RouteProgress />
+
     <!-- Animated gradient background -->
     <div class="bg-gradient" aria-hidden="true">
       <div class="bg-orb bg-orb--1"></div>
@@ -22,6 +25,7 @@
 
 <script setup lang="ts">
 import AppHeader from './components/AppHeader.vue'
+import RouteProgress from './components/RouteProgress.vue'
 </script>
 
 <style>
