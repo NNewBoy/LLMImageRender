@@ -97,6 +97,7 @@ async def run_render_agent(
         "user_prompt": "",
         "result_image_base64": None,
         "result_image_url": None,
+        "thumbnail_url": None,
         "status": "queued",
         "is_paused": False,
         "is_cancelled": False,
@@ -111,6 +112,7 @@ async def run_render_agent(
         return {
             "success": final_state.get("status") == "completed",
             "result_image_url": final_state.get("result_image_url", ""),
+            "thumbnail_url": final_state.get("thumbnail_url", ""),
             "error": final_state.get("error_message"),
             "status": final_state.get("status", "failed"),
         }

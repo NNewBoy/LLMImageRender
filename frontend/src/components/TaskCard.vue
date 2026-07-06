@@ -2,7 +2,7 @@
   <div class="task-card glass-card" @click="$emit('click')">
     <div class="task-thumbnail">
       <ImageViewer
-        :src="task.result_image_url || task.original_image_url"
+        :src="task.thumbnail_url || task.result_image_url || task.original_image_url"
         :alt="task.result_image_url ? '渲染结果' : '原始图片'"
         :preview="false"
       />

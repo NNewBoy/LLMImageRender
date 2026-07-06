@@ -26,6 +26,7 @@ class RenderAgentState(TypedDict, total=False):
 
     result_image_base64: Optional[str]
     result_image_url: Optional[str]
+    thumbnail_url: Optional[str]
 
     status: str
     is_paused: bool

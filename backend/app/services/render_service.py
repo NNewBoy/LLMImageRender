@@ -56,6 +56,7 @@ class RenderService:
             if result.get("success"):
                 task.status = "completed"
                 task.result_image = result.get("result_image_url", "")
+                task.thumbnail = result.get("thumbnail_url", "")
                 task.progress = 100
                 from datetime import datetime, timezone, timedelta
                 _CST = timezone(timedelta(hours=8))

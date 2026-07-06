@@ -7,7 +7,7 @@ from app.agent.skills.param_optimizer import optimize_params
 from app.agent.skills.prompt_builder import build_system_prompt, build_render_prompt
 from app.agent.skills.room_template import build_scene_prompt
 from app.agent.llm_client import llm_client
-from app.services.file_service import save_result_image
+from app.services.file_service import save_result_image, save_thumbnail
 
 logger = logging.getLogger(__name__)
 
@@ -105,9 +105,17 @@ async def call_llm_render(state: RenderAgentState) -> RenderAgentState:
                     local_url = save_result_image(image_bytes, task_id)
                     state["result_image_url"] = local_url
                     logger.info(f"[call_llm_render] 临时图片已保存到本地: {local_url}")
+                    try:
+                        thumb_url = save_thumbnail(image_bytes, task_id)
+                        state["thumbnail_url"] = thumb_url
+                        logger.info(f"[call_llm_render] 缩略图已生成: {thumb_url}")
+                    except Exception as te:
+                        logger.error(f"[call_llm_render] 生成缩略图失败: {te}")
+                        state["thumbnail_url"] = None
                 except Exception as e:
                     logger.error(f"[call_llm_render] 下载临时图片失败，回退使用原URL: {e}")
                     state["result_image_url"] = image_url
+                    state["thumbnail_url"] = None
             else:
                 state["result_image_url"] = image_url
             state["result_image_base64"] = result.get("image_base64")

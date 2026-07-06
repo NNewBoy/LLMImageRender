@@ -25,6 +25,7 @@ class RenderTask(Base):
     image_id = Column(String(64), nullable=True)
     original_image = Column(String(512), nullable=False)
     result_image = Column(String(512), nullable=True)
+    thumbnail = Column(String(512), nullable=True)
     params_json = Column(Text, nullable=False)
     error_message = Column(Text, nullable=True)
     created_at = Column(DateTime, default=_now_cst)

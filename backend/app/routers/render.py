@@ -151,6 +151,7 @@ def get_history(page: int = 1, page_size: int = 20, db: Session = Depends(get_db
                     "status": t.status,
                     "original_image_url": t.original_image,
                     "result_image_url": t.result_image,
+                    "thumbnail_url": t.thumbnail,
                     "params": json.loads(t.params_json) if t.params_json else {},
                     "created_at": t.created_at.isoformat() if t.created_at else None,
                     "completed_at": t.completed_at.isoformat() if t.completed_at else None,

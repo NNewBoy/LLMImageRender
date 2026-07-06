@@ -23,6 +23,7 @@ export interface RenderTask {
   image_id: string | null
   original_image_url: string
   result_image_url: string | null
+  thumbnail_url: string | null
   params: RenderParams
   created_at: string
   completed_at: string | null
