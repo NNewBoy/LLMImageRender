@@ -202,11 +202,6 @@ html.dark {
   --el-mask-color: rgba(0, 0, 0, 0.7);
   --el-mask-color-extra-light: rgba(0, 0, 0, 0.3);
 
-  /* Radius */
-  --el-border-radius-base: 8px;
-  --el-border-radius-small: 6px;
-  --el-border-radius-round: 20px;
-
   /* Disabled */
   --el-disabled-bg-color: rgba(255, 255, 255, 0.04);
   --el-disabled-text-color: #475569;
@@ -359,8 +354,8 @@ html.dark ::selection {
 /* Card */
 html:not(.dark) .el-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--saturate));
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-glass);
@@ -809,8 +804,8 @@ html:not(.dark) .el-message-box__btns .el-button--danger {
 /* Card */
 html.dark .el-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--saturate));
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-glass);
