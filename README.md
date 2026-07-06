@@ -7,9 +7,10 @@
 - **单品渲染**：上传柜子图片，AI 智能生成真实感3D渲染效果图，支持自定义纯色背景
 - **场景渲染**：将柜子布置在客厅、卧室、厨房、书房、玄关等典型户型中进行渲染
 - **图库管理**：预设柜子图库，每张图片附带柜子属性（宽/深/高/材质/颜色），选择图库图片时自动填充渲染参数；支持分类浏览、正序/倒序排序、图片编辑（改名/改分类/柜子属性）、删除
-- **渲染历史**：查看和管理所有渲染任务记录，支持删除记录和再次渲染
+- **渲染历史**：查看和管理所有渲染任务记录，支持删除记录和再次渲染；列表自动生成缩略图，减少带宽消耗加速加载
 - **异步非阻塞渲染**：渲染任务在独立线程池中执行（`asyncio.to_thread`），不阻塞其他 API 请求
 - **外部平台对接**：通过 URL 参数传入图片和渲染参数，支持 `image_id`（图库查询）、`image_url`、`image_base64` 三种图片来源
+- **路由加载进度条**：路由懒加载跳转时页面顶部显示渐变进度条，提升跳转等待体验
 
 ## 技术栈
 
@@ -32,8 +33,9 @@ LLMImageRender/
 │   │   │   ├── ParamPanel.vue   # 参数配置面板
 │   │   │   ├── ImageCompare.vue # 前后对比组件
 │   │   │   ├── SubmitBar.vue    # 提交按钮栏
-│   │   │   ├── TaskCard.vue     # 任务卡片
+│   │   │   ├── TaskCard.vue     # 任务卡片（使用缩略图）
 │   │   │   ├── TaskStatus.vue   # 任务状态
+│   │   │   ├── RouteProgress.vue # 路由跳转进度条
 │   │   │   └── RoomTypeSelector.vue # 户型选择器
 │   │   ├── pages/               # 页面组件
 │   │   │   ├── HomePage.vue
@@ -46,6 +48,8 @@ LLMImageRender/
 │   │   │   ├── render.ts        # 渲染参数状态
 │   │   │   ├── task.ts          # 任务列表状态
 │   │   │   └── theme.ts         # 主题切换状态（浅色/深色 + URL参数）
+│   │   ├── composables/         # 组合式函数
+│   │   │   └── useRouteProgress.ts # 路由进度条状态管理
 │   │   ├── api/                 # API请求封装
 │   │   ├── router/              # 路由配置
 │   │   ├── styles/              # 全局样式
@@ -70,7 +74,7 @@ LLMImageRender/
 │   │   │   └── params.py        # 预设参数
 │   │   ├── services/            # 业务逻辑
 │   │   │   ├── render_service.py
-│   │   │   └── file_service.py
+│   │   │   └── file_service.py  # 文件存储（含缩略图生成）
 │   │   ├── agent/               # LangGraph Agent
 │   │   │   ├── graph.py         # 工作流图定义
 │   │   │   ├── state.py         # 状态定义
@@ -88,6 +92,7 @@ LLMImageRender/
 │   └── requirements.txt
 │
 ├── SPEC.md                      # 软件规格说明书
+├── PROGRESS.md                  # 开发进度文档
 ├── DEPLOY_UBUNTU.md             # Ubuntu 部署指南
 └── README.md                    # 本文件
 ```
@@ -105,6 +110,8 @@ LLMImageRender/
 - **强调色**：靛蓝 `#6366f1` 为主色，紫色 `#8b5cf6` 为辅助
 - **字体**：Inter（Google Fonts），配合中文系统字体回退
 - **Element Plus 按需加载**：`unplugin-vue-components` 自动导入组件与样式，精简打包体积
+- **路由加载进度条**：懒加载路由跳转时页面顶部显示靛蓝渐变进度条（`scaleX` 动画），无新增依赖
+- **缩略图优化**：渲染结果保存时自动生成 400x400 缩略图，历史列表加载缩略图替代全尺寸图片，减少带宽
 - **双模式覆盖**：全组件 CSS 变量覆盖（`html:not(.dark)` / `html.dark`），统一玻璃风格
 - **主题持久化**：Pinia store + localStorage 持久化，URL 参数 `?theme=light/dark` 支持外部平台指定主题
 
@@ -250,7 +257,7 @@ http://localhost:5175/llmimagerender/render/scene?image_url=https://d00.paixin.c
 | POST | `/render_api/render/submit` | 提交渲染任务 |
 | GET | `/render_api/render/task/:id` | 查询任务状态 |
 | DELETE | `/render_api/render/task/:id` | 删除渲染任务 |
-| GET | `/render_api/render/history` | 渲染历史 |
+| GET | `/render_api/render/history` | 渲染历史（含缩略图 `thumbnail_url`） |
 | GET | `/render_api/params/presets` | 获取预设参数 |
 
 ## LangGraph Agent 工作流
