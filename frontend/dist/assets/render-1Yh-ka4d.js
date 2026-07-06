@@ -1,0 +1,1 @@
+import{d as t}from"./ImageViewer-Q3_Pl709.js";async function n(e){return t.post("/render/submit",e)}async function a(e){return t.get(`/render/task/${e}`)}async function i(e=1,r=20){return t.get("/render/history",{params:{page:e,page_size:r}})}async function u(e){return t.delete(`/render/task/${e}`)}export{a,u as d,i as g,n as s};
