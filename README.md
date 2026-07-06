@@ -6,7 +6,7 @@
 
 - **单品渲染**：上传柜子图片，AI 智能生成真实感3D渲染效果图，支持自定义纯色背景
 - **场景渲染**：将柜子布置在客厅、卧室、厨房、书房、玄关等典型户型中进行渲染
-- **图库管理**：预设柜子图库，每张图片附带柜子属性（宽/深/高/材质/颜色），选择图库图片时自动填充渲染参数；支持分类浏览、图片编辑（改名/改分类/柜子属性）、删除
+- **图库管理**：预设柜子图库，每张图片附带柜子属性（宽/深/高/材质/颜色），选择图库图片时自动填充渲染参数；支持分类浏览、正序/倒序排序、图片编辑（改名/改分类/柜子属性）、删除
 - **渲染历史**：查看和管理所有渲染任务记录，支持删除记录和再次渲染
 - **异步非阻塞渲染**：渲染任务在独立线程池中执行（`asyncio.to_thread`），不阻塞其他 API 请求
 - **外部平台对接**：通过 URL 参数传入图片和渲染参数，支持 `image_id`（图库查询）、`image_url`、`image_base64` 三种图片来源
@@ -101,10 +101,11 @@ LLMImageRender/
 - **双主题模式**：`:root` 为浅色模式（默认），`html.dark` 为深色模式覆盖；顶部导航栏一键切换，刷新后保持上次选择
 - **浅色主题**：`#eef2f8` 浅灰蓝背景 + `rgba(248,250,252,0.75)` 玻璃面 + 深色文字（对比度 ≥ 4.5:1）
 - **深色主题**：`#0a0a0f` 深色背景 + 动画渐变光球，营造沉浸感
-- **玻璃拟态**：`backdrop-filter: blur(20px)` + 半透明边框，卡片浮于背景之上
+- **玻璃拟态**：`backdrop-filter: blur(16px) saturate(160%~180%)` + 半透明边框 + 悬浮微上浮，卡片浮于背景之上
 - **强调色**：靛蓝 `#6366f1` 为主色，紫色 `#8b5cf6` 为辅助
 - **字体**：Inter（Google Fonts），配合中文系统字体回退
-- **Element Plus 双模式**：全组件 CSS 变量覆盖（`html:not(.dark)` / `html.dark`），统一玻璃风格
+- **Element Plus 按需加载**：`unplugin-vue-components` 自动导入组件与样式，精简打包体积
+- **双模式覆盖**：全组件 CSS 变量覆盖（`html:not(.dark)` / `html.dark`），统一玻璃风格
 - **主题持久化**：Pinia store + localStorage 持久化，URL 参数 `?theme=light/dark` 支持外部平台指定主题
 
 ### 响应式断点
@@ -242,7 +243,7 @@ http://localhost:5175/llmimagerender/render/scene?image_url=https://d00.paixin.c
 | 方法 | 端点 | 说明 |
 |------|------|------|
 | POST | `/render_api/images/upload` | 上传图片（MD5 去重，支持附带柜子属性） |
-| GET | `/render_api/images/gallery` | 获取图库（支持分类筛选） |
+| GET | `/render_api/images/gallery` | 获取图库（支持分类筛选、正序/倒序排序 `order=asc\|desc`） |
 | GET | `/render_api/images/gallery/:id` | 获取图片详情（含柜子属性） |
 | PUT | `/render_api/images/gallery/:id` | 更新图片信息（名称/分类/柜子属性） |
 | DELETE | `/render_api/images/gallery/:id` | 删除图片（含物理文件） |
