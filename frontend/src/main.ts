@@ -11,6 +11,7 @@ import './styles/theme.css'
 import App from './App.vue'
 import router from './router'
 import { useThemeStore } from '@/stores/theme'
+import { recordVisit } from '@/api/visit'
 
 const app = createApp(App)
 
@@ -27,3 +28,6 @@ themeStore.initFromUrl()
 app.use(router)
 
 app.mount('#app')
+
+// 记录访客量
+recordVisit('LLM柜子3D模型渲染器')
